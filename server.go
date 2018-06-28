@@ -1,10 +1,10 @@
 package main
 
 import (
-	"net/http"
 	"./app/route"
-	"fmt"
 	"./config"
+	"fmt"
+	"net/http"
 )
 
 const (
@@ -35,7 +35,6 @@ func main() {
 		fmt.Printf("%8v\n", bezeichnung)
 	}
 	*/
-
 
 	// config.InitSQLiteDB()
 

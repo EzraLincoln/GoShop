@@ -2,9 +2,9 @@ package config
 
 import (
 	"database/sql"
-	_ "github.com/mattn/go-sqlite3"
-	_ "github.com/lib/pq"
 	"fmt"
+	_ "github.com/lib/pq"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // Db handle
@@ -52,7 +52,7 @@ func InitPostgresDB() *sql.DB {
 
 	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable",
 		DB_USER, DB_PASSWORD, DB_NAME)
-	fmt.Println("Db = ",Db)
+	fmt.Println("Db = ", Db)
 	Db, err := sql.Open("postgres", dbinfo)
 
 	// fmt.Println("Db = ",Db)

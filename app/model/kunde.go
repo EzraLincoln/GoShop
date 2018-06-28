@@ -1,21 +1,21 @@
 package model
 
 import (
-	_ "github.com/mattn/go-sqlite3"
 	"../../config"
+	_ "github.com/mattn/go-sqlite3"
 )
 
-type Kunden map[int]* Kunde
+type Kunden map[int]*Kunde
 
 // Kunde data structure
 type Kunde struct {
-	KundeID int
+	KundeID      int
 	Benutzername string
-	BildUrl string
-	Typ string
-	Status string
-	Passwort string
-	Email string
+	BildUrl      string
+	Typ          string
+	Status       string
+	Passwort     string
+	Email        string
 }
 
 // Read Kunde by KundeID
@@ -26,10 +26,10 @@ func ReadKunde(id int) (kunde Kunde, err error) {
 }
 
 // Update the Kunde by id
-func  UpdateKunde(id int, bname string, psw string, mail string) (err error) {
-	_, err = config.Db.Exec("update Kunde set Benutzername = $1 where KundeID = $2",bname, id)
-	_, err = config.Db.Exec("update Kunde set Passwort = $1 where KundeID = $2",psw, id)
-	_, err = config.Db.Exec("update Kunde set Email = $1 where KundeID = $2",mail, id)
+func UpdateKunde(id int, bname string, psw string, mail string) (err error) {
+	_, err = config.Db.Exec("update Kunde set Benutzername = $1 where KundeID = $2", bname, id)
+	_, err = config.Db.Exec("update Kunde set Passwort = $1 where KundeID = $2", psw, id)
+	_, err = config.Db.Exec("update Kunde set Email = $1 where KundeID = $2", mail, id)
 	return
 }
 

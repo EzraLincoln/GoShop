@@ -1,11 +1,11 @@
 package controller
 
 import (
-	"../model"
 	"../../config"
+	"../model"
 )
 
-func GetAllVerleihe() (verleihe [] model.Verleih) {
+func GetAllVerleihe() (verleihe []model.Verleih) {
 	rows, err := config.Db.Query("select * from Verleih")
 
 	if err != nil {
@@ -15,13 +15,13 @@ func GetAllVerleihe() (verleihe [] model.Verleih) {
 	for rows.Next() {
 		verleih := model.Verleih{}
 
-		err = rows.Scan(&verleih.VerleihID,&verleih.KundenID,&verleih.ArtikelID,&verleih.Beginn,&verleih.Rueckgabe)
+		err = rows.Scan(&verleih.VerleihID, &verleih.KundenID, &verleih.ArtikelID, &verleih.Beginn, &verleih.Rueckgabe)
 
 		if err != nil {
 			return
 		}
 
-		verleihe= append(verleihe, verleih)
+		verleihe = append(verleihe, verleih)
 	}
 	rows.Close()
 	return

@@ -1,4 +1,4 @@
-{{define "layout"}}
+{{define "static_imports"}}
 
 <html lang="en">
 <head>
@@ -6,9 +6,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 
     <!-- BOOTSTRAP CSS -->
-    <link rel="stylesheet" href="/static/css/bootstrap-4.1.0.css">
+    <link rel="stylesheet" href="/static/css/bootstrap-4.1.0.css" id="bootstrap-css">
 
     <!-- CUSTOM CSS -->
     <link rel="stylesheet" href="/static/css/carousel.css">
@@ -24,11 +25,13 @@
 
 <body>
 <!-- JQUERY AND BOOTSTRAP JAVASCRIPT -->
+
 <script src="/static/js/jquery-3.3.1.js"></script>
 <script src="/static/js/bootstrap-4.1.0.js"></script>
 
 <!-- CUSTOM JS -->
-<script src="/static/js/index.js"></script>
+{{/*<script src="/static/js/index.js"></script>*/}}
+
 </body>
 </html>
 {{end}}

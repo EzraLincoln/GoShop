@@ -1,23 +1,23 @@
 package model
 
 import (
-	_ "github.com/mattn/go-sqlite3"
 	"../../config"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // Verleiher data structure
 type Verleih struct {
 	VerleihID int
-	KundenID int
+	KundenID  int
 	ArtikelID int
-	Beginn string
+	Beginn    string
 	Rueckgabe string
 }
 
-type Verleihe map[int]* Verleih
+type Verleihe map[int]*Verleih
 
 // Create Verleiher
-func  CreateVerleiher(bname string, mail string)  (err error) {
+func CreateVerleiher(bname string, mail string) (err error) {
 	//defer stmt.Close()
 	_, err = config.Db.Exec("insert into Verleiher (Benutzername, Email) values (bname, mail)")
 	return
@@ -33,9 +33,9 @@ func ReadVerleiher(id int) (verleiher Verleih, err error) {
 }
 
 // Update the Verleiher by id
-func  UpdateVerleiher(id int, bname string, mail string) (err error) {
-	_, err = config.Db.Exec("update Verleiher set Benutzername = $1 where VerleiherID = $2",bname, id)
-	_, err = config.Db.Exec("update Verleiher set Email = $1 where VerleiherID = $2",mail, id)
+func UpdateVerleiher(id int, bname string, mail string) (err error) {
+	_, err = config.Db.Exec("update Verleiher set Benutzername = $1 where VerleiherID = $2", bname, id)
+	_, err = config.Db.Exec("update Verleiher set Email = $1 where VerleiherID = $2", mail, id)
 	return
 }
 

@@ -2,10 +2,9 @@ package controller
 
 import (
 	"../../config"
-	"net/http"
 	"../model"
+	"net/http"
 )
-
 
 func RegisterKunden(w http.ResponseWriter, r *http.Request) {
 	userName := r.FormValue("user")
@@ -20,13 +19,13 @@ func RegisterKunden(w http.ResponseWriter, r *http.Request) {
 	}
 
 	defer stmt.Close()
-	_, err = stmt.Exec(userName,email,password)
+	_, err = stmt.Exec(userName, email, password)
 
 	return
 }
 
 // GetAll Kunden
-func GetAllUser() (kunden [] model.Kunde){
+func GetAllUser() (kunden []model.Kunde) {
 	rows, err := config.Db.Query("select * from Kunde where Typ = 'Benutzer'")
 
 	if err != nil {
@@ -35,7 +34,7 @@ func GetAllUser() (kunden [] model.Kunde){
 
 	for rows.Next() {
 		kunde := model.Kunde{}
-		err = rows.Scan(&kunde.KundeID,&kunde.Benutzername,&kunde.BildUrl,&kunde.Typ,&kunde.Status,&kunde.Email, &kunde.Passwort)
+		err = rows.Scan(&kunde.KundeID, &kunde.Benutzername, &kunde.BildUrl, &kunde.Typ, &kunde.Status, &kunde.Email, &kunde.Passwort)
 
 		if err != nil {
 			return
@@ -56,7 +55,7 @@ func GetProfile(kunde_id int) (profiles []model.Profile) {
 	for rows.Next() {
 		profile := model.Profile{}
 
-		err = rows.Scan(&profile.KundenID,&profile.Benutzername, &profile.BildURL, &profile.Mail, &profile.Status)
+		err = rows.Scan(&profile.KundenID, &profile.Benutzername, &profile.BildURL, &profile.Mail, &profile.Status)
 
 		if err != nil {
 			return

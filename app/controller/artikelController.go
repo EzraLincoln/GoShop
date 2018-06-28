@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"../model"
 	"../../config"
-	"net/http"
+	"../model"
 	"fmt"
+	"net/http"
 )
 
 func CreateArtikel(w http.ResponseWriter, r *http.Request) {
