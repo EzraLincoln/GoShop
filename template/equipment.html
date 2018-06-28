@@ -1,0 +1,74 @@
+{{define "equipment"}}
+
+<div class="container mt-5">
+    <h4 class="mr-0">Equipment</h4>
+    <div class="row">
+        <div class="col-md-1 ml-auto">
+            <p class="minimal-margin">Kategorie</p>
+        </div>
+        <div class="col-md-2 text-lg-right">
+            <p class="minimal-margin">Sortieren nach:</p>
+        </div>
+    </div>
+    <div class="row mt-1">
+        <div class="col-md-6 offset-md-4">
+            <div class="row">
+                <input class="search-bar" id="input1" type="text" placeholder="Suche">
+                <select class="form-control selectBox search-bar">
+                    <option>Alle</option>
+                    {{range .Kategorien}}
+                        <option>{{.}}</option>
+                    {{end}}
+                </select>
+            </div>
+        </div>
+        <div class="col-md-2 offset-0">
+            <select class="form-control">
+                <option></option>
+            {{range .Kategorien}}
+                <option>{{.}}</option>
+            {{end}}
+            </select>
+        </div>
+
+    </div>
+
+
+    <div class="row mt-5">
+    {{range .Items}}
+        <div class="col-md-6 mt-2">
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="row">
+                        <h5 class="">{{.Bezeichnung}}</h5>
+                    </div>
+                    <div class="row text-spalte">
+                        <p>{{.Hinweis}}</p>
+                    </div>
+                <div class="row">
+                {{if eq .Anzahl 0}}
+                    <div class="col">
+                    </div>
+                    <div class="col text-lg-right red-text">
+                        <p>entliehen</p>
+                    </div>
+                {{else}}
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-block button-startpage"></button>
+                    </div>
+                    <div class="col text-lg-right aktiv">
+                        <p>{{.Anzahl}} verfügbar</p>
+                    </div>
+                {{end}}
+                </div>
+                </div>
+                <div class="col-md-3">
+                    <img class="equipment-image" src="/static/images/{{.BildURL}}">
+                </div>
+            </div>
+        </div>
+    {{end}}
+
+    </div>
+</div>
+{{end}}

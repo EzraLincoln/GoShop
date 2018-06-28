@@ -1,0 +1,69 @@
+{{define "profile"}}
+<div class="container mt-5">
+    <h4 class="cursiv-text">Profil bearbeiten</h4>
+
+    {{range .Items}}
+        <div class="row">
+            <div class="col">
+                Status: <span class="active">{{.Status}}</span>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="user">Benutzername:</label>
+                            <input type="text" class="form-control" name="user" value="{{.Benutzername}}">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="mail">E-Mail:</label>
+                            <input type="text" class="form-control" name="mail" value="{{.Mail}}">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="npsw">Neues Passwort:</label>
+                            <input type="password" class="form-control" name="npsw">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="npsw">Neues Passwort wiederholen:</label>
+                            <input type="password" class="form-control" name="npswr">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <form action="#"><input type="submit" class="btn button-startpage" value="Änderungen Speichern"/>
+                        </form>
+                    </div>
+                    <div class="col">
+                        <form action="#"><input type="submit" class="btn button-loeschen" value="Konto löschen"/></form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 text-right">
+                <div class="d-flex flex-column">
+                    Profilbild
+                </div>
+                <div class="d-flex flex-column">
+                    <img class="img-fluid" style="height: 100px; width: 600px" src="/static/images/{{.BildURL}}" alt="profilbild">
+                </div>
+                <div class="d-flex flex-column my-2 text-right">
+                    <form action="#"><input type="submit" class="btn button-startpage" value="Profilbild ändern"/></form>
+                </div>
+            </div>
+        </div>
+    {{end}}
+</div>
+{{end}}

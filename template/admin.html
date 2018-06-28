@@ -1,0 +1,27 @@
+{{define "admin"}}
+
+<!-- CONTENT -->
+<div class="container mid-content">
+    <div class="row">
+        <div class="col text-center">
+            <h2>Administrationsbereich</h2>
+        </div>
+    </div>
+        <div class="row mt-5 mb-2">
+            <div class="offset-1 col-5 text-center">
+                <i class="fas fa-clipboard-list admin-icon"></i>
+            </div>
+            <div class="col-5 text-center">
+                <i class="fas fa-users admin-icon"></i>
+            </div>
+        </div>
+    <div class="row">
+        <div class="offset-1 col-5 text-center">
+            <form action="admin/equipment"> <input type="submit" class="btn button-startpage" value="Equipment-Verwaltung"/></form>
+        </div>
+        <div class="col-5 text-center">
+            <form action="admin/edit-clients"> <input type="submit" class="btn button-startpage" value="Kunden-Verwaltung"/></form>
+        </div>
+    </div>
+</div>
+{{end}}
