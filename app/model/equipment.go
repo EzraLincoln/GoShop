@@ -1,7 +1,7 @@
 package model
 
 // Artikel data structure
-type Artikel struct {
+type Equipment struct {
 	ArtikelID      int
 	Bezeichnung    string
 	Kategorie      string

@@ -5,7 +5,7 @@
 
 <!------ Include the above in your HEAD tag ---------->
 
-<div class="container mid-content">
+<div class="container mid-content mt-6">
     <div class="row">
         <div class="col big-bold-text">
             Willkommen
@@ -14,7 +14,7 @@
     </div>
     <div class="row">
         <div class="col title">
-        {{split .Title 0}}
+        {{split .menu.Title 0}}
         </div>
     </div>
     <div class="row justify-content-center">
@@ -34,58 +34,21 @@
         </div>
     </div>
 
-    <br>
-    <br>
-
-    <div class="container">
+    <div class="container mid-content mt-7">
         <div class="row">
             <div class="col-md-12">
                 <div id="Carousel"
                      class="carousel slide">
-
-                    <ol class="carousel-indicators">
-                        <li data-target="#Carousel"
-                            data-slide-to="0"
-                            class="active"></li>
-                        <li data-target="#Carousel"
-                            data-slide-to="1"></li>
-                        <li data-target="#Carousel"
-                            data-slide-to="2"></li>
-                    </ol>
 
                     <!-- Carousel items -->
                     <div class="carousel-inner">
 
                         <div class="item active">
                             <div class="row">
-                                <div class="col-md-3">
-                                    <a href="#"
-                                       class="thumbnail"><img
-                                            src="http://placehold.it/250x250"
-                                            alt="Image"
-                                            style="max-width:100%;"></a>
-                                </div>
-                                <div class="col-md-3">
-                                    <a href="#"
-                                       class="thumbnail"><img
-                                            src="http://placehold.it/250x250"
-                                            alt="Image"
-                                            style="max-width:100%;"></a>
-                                </div>
-                                <div class="col-md-3">
-                                    <a href="#"
-                                       class="thumbnail"><img
-                                            src="http://placehold.it/250x250"
-                                            alt="Image"
-                                            style="max-width:100%;"></a>
-                                </div>
-                                <div class="col-md-3">
-                                    <a href="#"
-                                       class="thumbnail"><img
-                                            src="http://placehold.it/250x250"
-                                            alt="Image"
-                                            style="max-width:100%;"></a>
-                                </div>
+                                <div class="col-md-3"> <a href="#" class="thumbnail"><img src="{{index .bilder 0}}" alt="Image" style="max-width:100%;"></a> </div>
+                                <div class="col-md-3"> <a href="#" class="thumbnail"><img src="{{index .bilder 1}}" alt="Image" style="max-width:100%;"></a> </div>
+                                <div class="col-md-3"> <a href="#" class="thumbnail"><img src="{{index .bilder 2}}" alt="Image" style="max-width:100%;"></a> </div>
+                                <div class="col-md-3"> <a href="#" class="thumbnail"><img src="{{index .bilder 3}}" alt="Image" style="max-width:100%;"></a> </div>
                             </div>
                             <!--.row-->
                         </div>
@@ -93,34 +56,10 @@
 
                         <div class="item">
                             <div class="row">
-                                <div class="col-md-3">
-                                    <a href="#"
-                                       class="thumbnail"><img
-                                            src="http://placehold.it/250x250"
-                                            alt="Image"
-                                            style="max-width:100%;"></a>
-                                </div>
-                                <div class="col-md-3">
-                                    <a href="#"
-                                       class="thumbnail"><img
-                                            src="http://placehold.it/250x250"
-                                            alt="Image"
-                                            style="max-width:100%;"></a>
-                                </div>
-                                <div class="col-md-3">
-                                    <a href="#"
-                                       class="thumbnail"><img
-                                            src="http://placehold.it/250x250"
-                                            alt="Image"
-                                            style="max-width:100%;"></a>
-                                </div>
-                                <div class="col-md-3">
-                                    <a href="#"
-                                       class="thumbnail"><img
-                                            src="http://placehold.it/250x250"
-                                            alt="Image"
-                                            style="max-width:100%;"></a>
-                                </div>
+                                <div class="col-md-3"> <a href="#" class="thumbnail"><img src="{{index .bilder 4}}" alt="Image" style="max-width:100%;"></a> </div>
+                                <div class="col-md-3"> <a href="#" class="thumbnail"><img src="{{index .bilder 5}}" alt="Image" style="max-width:100%;"></a> </div>
+                                <div class="col-md-3"> <a href="#" class="thumbnail"><img src="{{index .bilder 6}}" alt="Image" style="max-width:100%;"></a> </div>
+                                <div class="col-md-3"> <a href="#" class="thumbnail"><img src="{{index .bilder 7}}" alt="Image" style="max-width:100%;"></a> </div>
                             </div>
                             <!--.row-->
                         </div>
@@ -128,19 +67,10 @@
 
                         <div class="item">
                             <div class="row">
-                                <div class="col-md-3">
-                                    <a href="#"
-                                       class="thumbnail"><img src="http://placehold.it/250x250" alt="Image" style="max-width:100%;"></a>
-                                </div>
-                                <div class="col-md-3">
-                                    <a href="#" class="thumbnail"><img src="http://placehold.it/250x250" alt="Image" style="max-width:100%;"></a>
-                                </div>
-                                <div class="col-md-3">
-                                    <a href="#" class="thumbnail"><img src="http://placehold.it/250x250" alt="Image" style="max-width:100%;"></a>
-                                </div>
-                                <div class="col-md-3">
-                                    <a href="#" class="thumbnail"><img src="http://placehold.it/250x250" alt="Image" style="max-width:100%;"></a>
-                                </div>
+                                <div class="col-md-3"> <a href="#" class="thumbnail"><img src="{{index .bilder 8}}" alt="Image" style="max-width:100%;"></a> </div>
+                                <div class="col-md-3"> <a href="#" class="thumbnail"><img src="{{index .bilder 9}}" alt="Image" style="max-width:100%;"></a> </div>
+                                <div class="col-md-3"> <a href="#" class="thumbnail"><img src="{{index .bilder 10}}" alt="Image" style="max-width:100%;"></a> </div>
+                                <div class="col-md-3"> <a href="#" class="thumbnail"><img src="{{index .bilder 11}}" alt="Image" style="max-width:100%;"></a> </div>
                             </div>
                             <!--.row-->
                         </div>
@@ -148,8 +78,8 @@
 
                     </div>
                     <!--.carousel-inner-->
-                    <a data-slide="prev" href="#Carousel" class="left carousel-control">‹</a>
-                    <a data-slide="next" href="#Carousel" class="right carousel-control">›</a>
+                    <a data-slide="prev" href="#Carousel" class="mid-content left carousel-control">‹</a>
+                    <a data-slide="next" href="#Carousel" class="mid-content right carousel-control">›</a>
 
                 </div>
                 <!--.Carousel-->
@@ -166,7 +96,7 @@
 
 <script> $(document).ready(function ()
 {
-    $('#Carousel').carousel({interval: 5000})
+    $('#Carousel').carousel({interval: 3000})
 }); </script>
 
 {{end}}

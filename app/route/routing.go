@@ -52,7 +52,7 @@ type AdminEquipments struct {
 
 type Equipment struct {
 	Kategorien []string
-	Items      []model.Artikel
+	Items      []model.Equipment
 }
 
 type Profiles struct {
@@ -75,6 +75,14 @@ var funcMap = template.FuncMap{
 }
 
 //var artikelList = make(model.Artikels)
+
+//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+
+
+var Equipments = controller.Equipments{}
+var Kunden= controller.Kunden{}
+var Verleihe = controller.Verleihe{}
+
 
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
@@ -101,7 +109,33 @@ func index(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "main", p)
 	tmpl.ExecuteTemplate(w, "static_imports", p)
 	tmpl.ExecuteTemplate(w, "header", p)
-	tmpl.ExecuteTemplate(w, "index", p)
+
+	// tmpl.ExecuteTemplate(w, "index", p)
+
+	// map[string]interface{}{"mymap": map[string]string{"key": "value"}}
+
+	// foo := map[string]interface{}{"menu" : p,"test" : map[string]string{"key": "value"}}
+
+	fmt.Println(Verleih.GetAllVerleihe())
+
+	bilderUrlArray := []string{
+		"static/images/empty3.png",
+		"static/images/empty3.png",
+		"static/images/empty3.png",
+		"static/images/empty3.png",
+		"static/images/empty3.png",
+		"static/images/empty3.png",
+		"static/images/empty3.png",
+		"static/images/empty3.png",
+		"static/images/empty3.png",
+		"static/images/empty3.png",
+		"static/images/empty3.png",
+		"static/images/empty3.png"}
+
+	foo := map[string]interface{}{"menu": p, "bilder": bilderUrlArray}
+	tmpl.ExecuteTemplate(w, "index", foo)
+
+	// http://placehold.it/250x250"
 
 }
 
@@ -509,7 +543,7 @@ func test(w http.ResponseWriter, r *http.Request) {
 	// tmpl.ExecuteTemplate(w, "index", p)
 
 	// tmpl.Execute(os.Stdout, "HALLO")
-	const html_code = `{{.}}`
+	const html_code = `{{index . 3}}`
 
 	/*type Text struct {
 		text string

@@ -6,7 +6,11 @@ import (
 	"net/http"
 )
 
-func RegisterKunden(w http.ResponseWriter, r *http.Request) {
+// type Verleih model.Kunde
+
+type Kunden struct{}
+
+func (v *(Kunden)) RegisterKunden(w http.ResponseWriter, r *http.Request) {
 	userName := r.FormValue("user")
 	email := r.FormValue("mail")
 	password := r.FormValue("psw")
@@ -24,8 +28,7 @@ func RegisterKunden(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-// GetAll Kunden
-func GetAllUser() (kunden []model.Kunde) {
+func (v *(Kunden)) GetAllUser() (kunden []model.Kunde) {
 	rows, err := config.Db.Query("select * from Kunde where Typ = 'Benutzer'")
 
 	if err != nil {
@@ -46,7 +49,7 @@ func GetAllUser() (kunden []model.Kunde) {
 	return
 }
 
-func GetProfile(kunde_id int) (profiles []model.Profile) {
+func (v *(Kunden)) GetProfile(kunde_id int) (profiles []model.Profile) {
 	rows, err := config.Db.Query("select Kunde.KundeID,Kunde.Benutzername,Kunde.BildUrl,Kunde.Email,Kunde.Status from Kunde WHERE Kunde.KundeID = $1", kunde_id)
 
 	if err != nil {
