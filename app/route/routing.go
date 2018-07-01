@@ -76,14 +76,11 @@ var funcMap = template.FuncMap{
 
 //var artikelList = make(model.Artikels)
 
-//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
-
-
 var Equipments = controller.Equipments{}
-var Kunden= controller.Kunden{}
+var Kunden = controller.Kunden{}
 var Verleihe = controller.Verleihe{}
 
-//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
 func index(w http.ResponseWriter, r *http.Request) {
 
@@ -138,31 +135,6 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func admin(w http.ResponseWriter, r *http.Request) {
-
-	fmt.Println("admin(w http.ResponseWriter, r *http.Request)")
-	fmt.Println()
-
-	p := menu{
-		Title:     "borgdir.media,index",
-		Item1:     "Equipment,equipment",
-		Item2:     "Kunden,clients",
-		Item3:     "Logout,logout",
-		Basket:    false,
-		Name:      "Peter",
-		Type:      "Verleiher",
-		EmptySide: false,
-		Profile:   true}
-
-	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/admin.html", "template/header.html", "template/static_imports.html"))
-
-	tmpl.ExecuteTemplate(w, "main", p)
-	tmpl.ExecuteTemplate(w, "static_imports", p)
-	tmpl.ExecuteTemplate(w, "header", p)
-	tmpl.ExecuteTemplate(w, "admin", p)
-
-}
-
 func login(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("login(w http.ResponseWriter, r *http.Request)")
@@ -187,6 +159,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "login", p)
 
 }
+
 func register(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("register(w http.ResponseWriter, r *http.Request)")
@@ -220,6 +193,8 @@ func register(w http.ResponseWriter, r *http.Request) {
 		tmpl.ExecuteTemplate(w, "register", p)
 	}
 }
+
+//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
 func equipment(w http.ResponseWriter, r *http.Request) {
 
@@ -255,6 +230,7 @@ func equipment(w http.ResponseWriter, r *http.Request) {
 	// tmpl.ExecuteTemplate(w, "equipment", map[string]interface{}{"mymap": map[string]string{"key": "value"}})
 
 }
+
 func myequipment(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("myequipment(w http.ResponseWriter, r *http.Request)")
@@ -336,6 +312,33 @@ func profile(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+
+func admin(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("admin(w http.ResponseWriter, r *http.Request)")
+	fmt.Println()
+
+	p := menu{
+		Title:     "borgdir.media,index",
+		Item1:     "Equipment,equipment",
+		Item2:     "Kunden,clients",
+		Item3:     "Logout,logout",
+		Basket:    false,
+		Name:      "Peter",
+		Type:      "Verleiher",
+		EmptySide: false,
+		Profile:   true}
+
+	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/admin.html", "template/header.html", "template/static_imports.html"))
+
+	tmpl.ExecuteTemplate(w, "main", p)
+	tmpl.ExecuteTemplate(w, "static_imports", p)
+	tmpl.ExecuteTemplate(w, "header", p)
+	tmpl.ExecuteTemplate(w, "admin", p)
+
+}
+
 func adminEquipment(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("adminEquipment(w http.ResponseWriter, r *http.Request)")
@@ -370,7 +373,7 @@ func adminAddEquipment(w http.ResponseWriter, r *http.Request) {
 	fmt.Println()
 
 	if r.Method == "POST" {
-		 Equipments.CreateEquipment(w, r)
+		Equipments.CreateEquipment(w, r)
 		// equipment(w,r)
 	} else {
 
@@ -385,7 +388,7 @@ func adminAddEquipment(w http.ResponseWriter, r *http.Request) {
 			EmptySide: false,
 			Profile:   true}
 
-		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/adminAddEquipment.html", "template/header.html", "template/static_imports.html"))
+			tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/adminAddEquipment.html", "template/header.html", "template/static_imports.html"))
 
 		tmpl.ExecuteTemplate(w, "main", p)
 		tmpl.ExecuteTemplate(w, "static_imports", p)
@@ -394,6 +397,7 @@ func adminAddEquipment(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
 func adminEditEquipment(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("adminEditEquipment(w http.ResponseWriter, r *http.Request)")
@@ -484,7 +488,8 @@ func adminProfiles(w http.ResponseWriter, r *http.Request) {
 
 	}
 }
-func adminEditProfile(w http.ResponseWriter, r *http.Request) {
+
+func adminEditClient(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("adminEditProfile(w http.ResponseWriter, r *http.Request)")
 	fmt.Println()
@@ -511,6 +516,8 @@ func adminEditProfile(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "adminEditProfile", Profiles{Items: ClientArr})
 
 }
+
+//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
 func test(w http.ResponseWriter, r *http.Request) {
 
@@ -568,7 +575,7 @@ func test(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
 func Handler() {
 
@@ -581,7 +588,7 @@ func Handler() {
 	http.HandleFunc("/admin/equipment", adminEquipment)
 	http.HandleFunc("/admin/add", adminAddEquipment)
 	http.HandleFunc("/admin/clients", adminProfiles)
-	http.HandleFunc("/admin/edit-clients", adminEditProfile)
+	http.HandleFunc("/admin/edit-client", adminEditClient)
 	http.HandleFunc("/admin/edit-equipment", adminEditEquipment)
 	http.HandleFunc("/login", login)
 	http.HandleFunc("/equipment", equipment)

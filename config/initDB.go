@@ -2,70 +2,24 @@ package config
 
 import (
 	"database/sql"
-	"fmt"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
+	"fmt"
 )
 
 // Db handle
 var Db *sql.DB
 var err error
 
-const (
-	DB_USER     = "borgdirmedia"
-	DB_PASSWORD = "borgdirmedia"
-	DB_NAME     = "borgdirmedia"
-)
-
 func InitSQLiteDB() *sql.DB {
 
-	fmt.Println("Initialize SQLite Database")
-
-	Db, err = sql.Open("sqlite3", "./data/borgdirmedia.db")
-
-	if err != nil {
-		fmt.Println("FEHLER")
-		panic(err)
-	} else {
-		fmt.Println("Erfolgreich Verbindung mit Datenbank aufgebaut !")
-	}
-
+	Db, err := sql.Open("sqlite3", "./data/borgdirmedia.db")
+	test(err)
 	return Db
 }
 
-func InitPostgresDB() *sql.DB {
-
-	/* fmt.Println("Initialize Postgres Database")
-
-	connStr := "user=borgdirmedia dbname=borgdirmedia password=borgdirmedia host=localhost port=5431 sslmode=disable"
-	Db, err = sql.Open("postgres", connStr)
-
-	if err != nil {
-		fmt.Println("FEHLER")
-		log.Fatal(err)
-	} else {
-		fmt.Println("Erfolgreich Verbindung mit Datenbank aufgebaut !")
+func test(e error) {
+	if (err != nil) {
+		fmt.Println("FEHLER : ", e)
 	}
-
-		fmt.Println("Start")
-	*/
-
-	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable",
-		DB_USER, DB_PASSWORD, DB_NAME)
-	fmt.Println("Db = ", Db)
-	Db, err := sql.Open("postgres", dbinfo)
-
-	// fmt.Println("Db = ",Db)
-
-	fmt.Println(err)
-
-	// defer Db.Close()
-
-	// fmt.Println("Db = ",Db)
-
-	return Db
-}
-
-func ReturnDB() *sql.DB {
-	return Db
 }
