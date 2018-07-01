@@ -1,5 +1,5 @@
 {{define "header"}}
-<div class="container-fluid">
+<div class="container">
     <div class="d-flex flex-row align-items-baseline">
         <div class="p-2 title">
             <a class="title" href="/{{split .Title 1}}">{{split .Title 0}}</a>
@@ -16,16 +16,14 @@
             <a href="{{split .Item2 1}}">{{split .Item2 0}}</a>
         </div>
         {{if .Item3}}
-            <div class ="p-2 menu-item separator">
-                |
-            </div>
+            <div class ="p-2 menu-item separator">|</div>
         {{end}}
         <div class="p-2 menu-item">
             <a href="/{{split .Item3 1}}">{{split .Item3 0}}</a>
         </div>
         {{if .Basket}}
             <div class="p-2 align-self-baseline">
-                <i class="fas fa-shopping-cart fa-lg"></i>
+                <i class="fas fa-shopping-cart fa-4x"></i>
             </div>
         {{end}}
         {{if .EmptySide}}

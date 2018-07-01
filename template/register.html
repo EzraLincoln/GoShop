@@ -1,42 +1,42 @@
 {{define "register"}}
-<div class="container mt-5">
+<div class="container mid-content">
     <div class="row text-center">
-        <div class="col big-bold-text">
+        <div class="col big-bold-text cursiv-text">
             Noch kein Kunde bei uns ?
         </div>
     </div>
 
-    <form class="form" role="form" onsubmit="return validateForm()" method="POST">
-        <div class="row justify-content-center mid-content">
+    <form class="form mid-content" role="form" onsubmit="return validateForm()" method="POST">
+        <div class="row justify-content-center">
             <div class="col-md-6">
-                <div class="form-group">
+                <div class="form-group small-text cursiv-text" style="text-align: left">
                     <label for="user">Benutzername:</label>
-                    <input type="text" class="form-control" name="user" id="user">
+                    <input type="text" class="form-control" name="user" id="user" style="border: 1px solid #888;border-radius: 25px;">
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="form-group">
+                <div class="form-group small-text cursiv-text" style="text-align: left">
                     <label for="mail">E-Mail:</label>
-                    <input type="text" class="form-control" name="mail" id="mail">
+                    <input type="text" class="form-control" name="mail" id="mail" style="border: 1px solid #888;border-radius: 25px;">
                 </div>
             </div>
         </div>
         <div class="row justify-content-center">
             <div class="col-md-6">
-                <div class="form-group">
+                <div class="form-group small-text cursiv-text" style="text-align: left">
                     <label for="psw">Passwort:</label>
-                    <input type="password" class="form-control" name="psw" id="psw">
+                    <input type="password" class="form-control" name="psw" id="psw" style="border: 1px solid #888;border-radius: 25px;">
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="form-group">
+                <div class="form-group small-text cursiv-text" style="text-align: left">
                     <label for="psw">Passwort wiederholen:</label>
-                    <input type="password" class="form-control" name="pswr" id="pswr">
+                    <input type="password" class="form-control" name="pswr" id="pswr" style="border: 1px solid #888;border-radius: 25px;">
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="col text-center mt-3">
+            <div class="col text-center mt-5">
                 <!--<form action="#"><input type="submit" class="btn button-startpage" value="Registrieren"/></form>-->
                 <button type="submit" class="btn button-startpage" id="btnLogin">Registrieren</button>
 

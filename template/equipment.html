@@ -34,11 +34,11 @@
     </div>
 
 
-    <div class="row mt-5">
+    <div class="row mt-5" style="margin-left:4%">
     {{range .Items}}
-        <div class="col-md-6 mt-2">
+        <div class="col-md-5 mt-4" style="border: 1px solid #888;border-radius: 25px;padding: 2%;margin-left:1%">
             <div class="row">
-                <div class="col-md-9">
+                <div class="col-md-6">
                     <div class="row">
                         <h5 class="">{{.Bezeichnung}}</h5>
                     </div>
@@ -63,7 +63,7 @@
                 </div>
                 </div>
                 <div class="col-md-3">
-                    <img class="equipment-image" src="/static/images/{{.BildURL}}">
+                    <img class="equipment-image" src="/static/media/equipment/{{.BildURL}}">
                 </div>
             </div>
         </div>
