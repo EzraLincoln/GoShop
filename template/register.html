@@ -1,97 +1,134 @@
 {{define "register"}}
 <div class="container mid-content">
-    <div class="row text-center">
-        <div class="col big-bold-text cursiv-text">
-            Noch kein Kunde bei uns ?
-        </div>
+ <div class="row text-center">
+  <div class="col big-bold-text cursiv-text">
+   Noch kein Kunde bei uns ?
+  </div>
+ </div>
+
+ <form class="form mid-content" role="form" onsubmit="return validateForm()" id="outer_form" method="POST">
+
+  <div class="row justify-content-center">
+   <div class="col-md-4">
+    <div class="form-group small-text cursiv-text" style="text-align: left">
+     <label for="user">Benutzername:</label>
+     <input type="text" class="form-control" onfocus="this.value=''" name="user" id="user" style="border: 1px solid #888;border-radius: 25px;" required>
     </div>
+   </div>
+   <div class="col-md-4">
+    <div class="form-group small-text cursiv-text" style="text-align: left">
+     <label for="mail">E-Mail:</label>
+     <input type="text" class="form-control" onfocus="this.value=''" name="mail" id="mail" style="border: 1px solid #888;border-radius: 25px;" required>
+    </div>
+   </div>
+  </div>
 
-    <form class="form mid-content" role="form" onsubmit="return validateForm()" method="POST">
-        <div class="row justify-content-center">
-            <div class="col-md-4">
-                <div class="form-group small-text cursiv-text" style="text-align: left">
-                    <label for="user">Benutzername:</label>
-                    <input type="text" class="form-control" name="user" id="user" style="border: 1px solid #888;border-radius: 25px;" required>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group small-text cursiv-text" style="text-align: left">
-                    <label for="mail">E-Mail:</label>
-                    <input type="text" class="form-control" name="mail" id="mail" style="border: 1px solid #888;border-radius: 25px;" required>
-                </div>
-            </div>
-        </div>
-        <div class="row justify-content-center">
-            <div class="col-md-4">
-                <div class="form-group small-text cursiv-text" style="text-align: left">
-                    <label for="psw">Passwort:</label>
-                    <input type="password" class="form-control" name="password" id="password" style="border: 1px solid #888;border-radius: 25px;" required>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group small-text cursiv-text" style="text-align: left">
-                    <label for="psw">Passwort wiederholen:</label>
-                    <input type="password" class="form-control" name="password2" id="password2" style="border: 1px solid #888;border-radius: 25px;" required>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col text-center mt-5">
-                <!--<form action="#"><input type="submit" class="btn button-startpage" value="Registrieren"/></form>-->
-                <button type="submit" class="btn big-bold-text button-startpage" id="btnLogin" style="border: 1px solid #888;border-radius: 25px;">Registrieren</button>
-                {{/*<button onclick="post()" class="btn big-bold-text button-startpage" id="btnLogin" style="border: 1px solid #888;border-radius: 25px;">Registrieren</button>*/}}
-
-            </div>
-        </div>
-    </form>
+  <div class="row justify-content-center">
+   <div class="col-md-4">
+    <div class="form-group small-text cursiv-text" style="text-align: left">
+     <label for="psw">Passwort:</label>
+     <input type="password" class="form-control" onChange="check()" onfocus="this.value=''" name="password" id="password" style="border: 1px solid #888;border-radius: 25px;" required>
+    </div>
+   </div>
+   <div class="col-md-4">
+    <div class="form-group small-text cursiv-text" style="text-align: left">
+     <label for="psw">Passwort wiederholen:</label>
+     <input type="password" class="form-control" onChange="check()" onfocus="this.value=''" name="password2" id="password2" style="border: 1px solid #888;border-radius: 25px;" required>
+    </div>
+   </div>
+  </div>
+  <div class="row">
+   <div class="col text-center mt-5">
+    <!--<form action="#"><input type="submit" class="btn button-startpage" value="Registrieren"/></form>-->
+    <button type="submit" class="btn big-bold-text button-startpage" id="registerSubmit" disabled="true" style="border: 1px solid #888;border-radius: 25px;">Registrieren</button>
+   </div>
+  </div>
+ </form>
 </div>
 
 <script>
 
-    function post()
-    {
-        if ($("#user").val() == "")
-        {
 
-        }
-        if ($("#mail").val() == "")
-        {
+ $('input[type=password]').on('input', function ()
+ {
 
-        }
-        if ($("#password").val() == "")
-        {
+  if ($("#password").val() == "" || $("#password2").val() == "")
+  {
+   $('#password').css('background-color', 'white');
+   $('#password2').css('background-color', 'white');
+  }
+  else
+  {
+      
+  }
 
-        }
-        if ($("#password2").val() == "")
-        {
+ });
 
-        }
+ function check()
+ {
+  console.log("CHECK");
 
+  pass1 = $('input[name=password]').val();
+  pass2 = $('input[name=password2]').val();
 
-        var form = document.createElement("form");
-        form.setAttribute("method", "post");
-        form.setAttribute("action", "#");
+  if (pass1.length > 0 && pass2.length > 0)
+  {
+   console.log("CHECK 2");
 
-        var params = {name: "Johnny Bravo", name2: "Kurt Wagner", name3: "Leon Kroll"};
+   if (pass1 != pass2)
+   {
+    $('#password').css('background-color', 'red');
+    $('#password2').css('background-color', 'red');
+   }
+   else
+   {
+    $('#password').css('background-color', 'white');
+    $('#password2').css('background-color', 'white');
 
-        for (var key in params)
-        {
-            if (params.hasOwnProperty(key))
-            {
-                var hiddenField = document.createElement("input");
+    console.log("KORREKT");
 
-                hiddenField.setAttribute("type", "hidden");
-                hiddenField.setAttribute("name", key);
-                hiddenField.setAttribute("value", params[key]);
+    // $("#outer_form")[0].submit();
 
-                form.appendChild(hiddenField);
-            }
-        }
+    $("#registerSubmit").attr("disbabled", "false");
+   }
+  }
 
-        document.body.appendChild(form);
+  // });
+ }
 
-        form.submit();
-    }
+ {{/*<button onclick="post()" class="btn big-bold-text button-startpage" id="btnLogin" style="border: 1px solid #888;border-radius: 25px;">Registrieren</button>*/}}
+
+ function post()
+ {
+  if ($("#user").val() == "")
+  {
+  }
+
+  var form = document.createElement("form");
+  form.setAttribute("method", "post");
+  form.setAttribute("action", "#");
+
+  var params = {name: "Johnny Bravo", name2: "Kurt Wagner", name3: "Leon Kroll"};
+
+  for (var key in params)
+  {
+   if (params.hasOwnProperty(key))
+   {
+    var hiddenField = document.createElement("input");
+
+    hiddenField.setAttribute("type", "hidden");
+    hiddenField.setAttribute("name", key);
+    hiddenField.setAttribute("value", params[key]);
+
+    form.appendChild(hiddenField);
+   }
+  }
+
+  document.body.appendChild(form);
+
+  form.submit();
+ }
+
 
 </script>
 
