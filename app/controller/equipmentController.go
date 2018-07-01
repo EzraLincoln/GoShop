@@ -9,7 +9,7 @@ import (
 
 type Equipments struct{}
 
-func (v *(Equipments)) CreateEquipment(w http.ResponseWriter, r *http.Request) {
+func (v Equipments) CreateEquipment(w http.ResponseWriter, r *http.Request) {
 
 	bezeichnung := r.FormValue("bz")
 	kategorie := r.FormValue("kat")
@@ -33,7 +33,7 @@ func (v *(Equipments)) CreateEquipment(w http.ResponseWriter, r *http.Request) {
 }
 
 // Update the Equipment-Bezeichnung by id
-func (v *(Equipments)) UpdateEquipment(id int, bez string, kat string, lago string, anz int, hin string, url string) (err error) {
+func (v Equipments) UpdateEquipment(id int, bez string, kat string, lago string, anz int, hin string, url string) (err error) {
 	_, err = config.Db.Exec("update Equipment set Bezeichnung = $1 where EquipmentID = $2", bez, id)
 	_, err = config.Db.Exec("update Equipment set Kategorie = $1 where EquipmentID = $2", kat, id)
 	_, err = config.Db.Exec("update Equipment set Lagerort = $1 where EquipmentID = $2", lago, id)
@@ -44,12 +44,12 @@ func (v *(Equipments)) UpdateEquipment(id int, bez string, kat string, lago stri
 }
 
 // Delete Equipment by id
-func (v *(Equipments)) DeleteEquipment(id int) (err error) {
+func (v Equipments) DeleteEquipment(id int) (err error) {
 	_, err = config.Db.Exec("delete from Equipment where EquipmentID = $1", id)
 	return
 }
 
-func (v *(Equipments)) GetEquipment() (Equipments []model.Equipment) {
+func (v Equipments) GetEquipment() (Equipments []model.Equipment) {
 	// rows, err := config.Db.Query("select BildURL, Bezeichnung, Anzahl, Hinweis FROM Equipment")
 
 	// fmt.Println("DB : ",config.ReturnDB())
@@ -93,7 +93,7 @@ func (v *(Equipments)) GetEquipment() (Equipments []model.Equipment) {
 	return
 }
 
-func (v *(Equipments)) GetAllBezeichnungenFromKundenEquipment(kunde_id int) (Bezeichnungen []string) {
+func (v Equipments) GetAllBezeichnungenFromKundenEquipment(kunde_id int) (Bezeichnungen []string) {
 
 	rows, err := config.Db.Query("select Equipment.Bezeichnung from Equipment,Verleih where Verleih.KundenID=$1 and Equipment.EquipmentID = Verleih.EquipmentID", kunde_id)
 
@@ -117,7 +117,7 @@ func (v *(Equipments)) GetAllBezeichnungenFromKundenEquipment(kunde_id int) (Bez
 	return
 }
 
-func (v *(Equipments)) GetUserEquipment(kunde_id int) (equipments []model.MyEquipment) {
+func (v Equipments) GetUserEquipment(kunde_id int) (equipments []model.MyEquipment) {
 	rows, err := config.Db.Query("select Equipment.BildURL, Equipment.Bezeichnung, Equipment.InventarNummer, Equipment.Hinweis, Verleih.Beginn, Verleih.Rueckgabe from Equipment,Verleih WHERE Equipment.EquipmentID = Verleih.EquipmentID AND Verleih.KundenID=$1", kunde_id)
 
 	if err != nil {
@@ -138,7 +138,7 @@ func (v *(Equipments)) GetUserEquipment(kunde_id int) (equipments []model.MyEqui
 	return
 }
 
-func (v *(Equipments)) GetAdminEquipment(kunde_id int) (adminEquipments []model.AdminEquipments) {
+func (v Equipments) GetAdminEquipment(kunde_id int) (adminEquipments []model.AdminEquipments) {
 	rows, err := config.Db.Query("select Equipment.Bezeichnung, Equipment.InventarNummer, Equipment.Lagerort Equipment.Hinweis, Kunde.Benutzername, Verleih.Rueckgabe from Equipment,Verleih,Kunde WHERE Equipment.EquipmentID = Verleih.EquipmentID AND Verleih.KundenID=$1", kunde_id)
 
 	if err != nil {

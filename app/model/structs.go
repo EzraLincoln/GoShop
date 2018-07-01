@@ -21,13 +21,13 @@ type AdminEquipments struct {
 	Rueckgabe      string
 }
 
-// /equipment Seiten Struct
+/* // /equipment Seiten Struct
 type Equipment struct {
 	BildURL     string
 	Bezeichnung string
 	Anzahl      int
 	Hinweis     string
-}
+}*/
 
 // /admin/edit-clients
 type Profile struct {

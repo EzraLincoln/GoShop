@@ -37,9 +37,7 @@ func main() {
 	*/
 
 	// config.InitSQLiteDB()
-
-	fmt.Println(config.Db)
-
+	
 	// config.Db = config.InitPostgresDB()
 
 	config.Db = config.InitSQLiteDB()

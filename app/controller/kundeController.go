@@ -10,7 +10,7 @@ import (
 
 type Kunden struct{}
 
-func (v *(Kunden)) RegisterKunden(w http.ResponseWriter, r *http.Request) {
+func (v Kunden) RegisterKunden(w http.ResponseWriter, r *http.Request) {
 	userName := r.FormValue("user")
 	email := r.FormValue("mail")
 	password := r.FormValue("psw")
@@ -28,7 +28,7 @@ func (v *(Kunden)) RegisterKunden(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (v *(Kunden)) GetAllUser() (kunden []model.Kunde) {
+func (v Kunden) GetAllUser() (kunden []model.Kunde) {
 	rows, err := config.Db.Query("select * from Kunde where Typ = 'Benutzer'")
 
 	if err != nil {
@@ -49,7 +49,7 @@ func (v *(Kunden)) GetAllUser() (kunden []model.Kunde) {
 	return
 }
 
-func (v *(Kunden)) GetProfile(kunde_id int) (profiles []model.Profile) {
+func (v Kunden) GetProfile(kunde_id int) (profiles []model.Profile) {
 	rows, err := config.Db.Query("select Kunde.KundeID,Kunde.Benutzername,Kunde.BildUrl,Kunde.Email,Kunde.Status from Kunde WHERE Kunde.KundeID = $1", kunde_id)
 
 	if err != nil {

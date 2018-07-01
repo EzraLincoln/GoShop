@@ -9,7 +9,7 @@ import (
 
 type Verleihe struct{}
 
-func (v *(Verleihe)) GetAllVerleihe() (verleihe []model.Verleih) {
+func (v Verleihe) GetAllVerleihe() (verleihe []model.Verleih) {
 	rows, err := config.Db.Query("select * from Verleih")
 
 	if err != nil {

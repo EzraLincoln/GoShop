@@ -21,7 +21,7 @@ func InitSQLiteDB() *sql.DB {
 
 	fmt.Println("Initialize SQLite Database")
 
-	Db, err = sql.Open("sqlite3", "./data/borgdirmedia")
+	Db, err = sql.Open("sqlite3", "./data/borgdirmedia.db")
 
 	if err != nil {
 		fmt.Println("FEHLER")

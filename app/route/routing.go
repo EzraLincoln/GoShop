@@ -83,7 +83,6 @@ var Equipments = controller.Equipments{}
 var Kunden= controller.Kunden{}
 var Verleihe = controller.Verleihe{}
 
-
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
 func index(w http.ResponseWriter, r *http.Request) {
@@ -116,7 +115,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 	// foo := map[string]interface{}{"menu" : p,"test" : map[string]string{"key": "value"}}
 
-	fmt.Println(Verleih.GetAllVerleihe())
+	fmt.Println(Verleihe.GetAllVerleihe())
 
 	bilderUrlArray := []string{
 		"static/images/empty3.png",
@@ -195,7 +194,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 
-		controller.RegisterKunden(w, r)
+		Kunden.RegisterKunden(w, r)
 		//userName := r.FormValue("KundenID")
 		//fmt.Print(userName)
 		index(w, r)
@@ -238,7 +237,7 @@ func equipment(w http.ResponseWriter, r *http.Request) {
 		EmptySide: false,
 		Profile:   true}
 
-	EquipmentArr := controller.GetEquipment()
+	EquipmentArr := Equipments.GetEquipment()
 
 	// KategorieArr := []string{"hallo","bubu","chingchong","donald"}
 
@@ -273,7 +272,7 @@ func myequipment(w http.ResponseWriter, r *http.Request) {
 		Profile:   true}
 
 	// Alle Artikel von eingeloggtem Kunden -> var logged_id
-	ArtikelArr := controller.GetUserEquipment(1)
+	ArtikelArr := Equipments.GetUserEquipment(1)
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/myequipment.html", "template/header.html", "template/static_imports.html"))
 
@@ -325,7 +324,7 @@ func profile(w http.ResponseWriter, r *http.Request) {
 		EmptySide: false,
 		Profile:   true}
 
-	ProfilesArr := controller.GetProfile(1)
+	ProfilesArr := Kunden.GetProfile(1)
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/profile.html", "template/header.html", "template/static_imports.html"))
 
@@ -354,7 +353,7 @@ func adminEquipment(w http.ResponseWriter, r *http.Request) {
 		EmptySide: false,
 		Profile:   true}
 
-	ArtikelArr := controller.GetAdminEquipment(1)
+	ArtikelArr := Equipments.GetAdminEquipment(1)
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/adminEquipment.html", "template/header.html", "template/static_imports.html"))
 
@@ -371,7 +370,7 @@ func adminAddEquipment(w http.ResponseWriter, r *http.Request) {
 	fmt.Println()
 
 	if r.Method == "POST" {
-		controller.CreateArtikel(w, r)
+		 Equipments.CreateEquipment(w, r)
 		// equipment(w,r)
 	} else {
 
@@ -401,7 +400,7 @@ func adminEditEquipment(w http.ResponseWriter, r *http.Request) {
 	fmt.Println()
 
 	if r.Method == "POST" {
-		controller.CreateArtikel(w, r)
+		Equipments.CreateEquipment(w, r)
 		// equipment(w,r)
 	} else {
 
@@ -452,7 +451,7 @@ func adminProfiles(w http.ResponseWriter, r *http.Request) {
 			Profile:   true}
 
 		//Alle Kunden auslesen
-		KundenArr := controller.GetAllUser()
+		KundenArr := Kunden.GetAllUser()
 
 		var ClientsArr = []client{}
 
@@ -460,7 +459,7 @@ func adminProfiles(w http.ResponseWriter, r *http.Request) {
 		for _, element := range KundenArr {
 			// ClientsArr = append(ClientsArr,client{controller.getKundenById(controller.getVerleihById(index).kundeID)).bildUrl,"asdasd","asdasd","asdasd","asdasd","asdasdad",},)
 
-			artikelFromUser := controller.GetAllBezeichnungenFromKundenArtikel(element.KundeID)
+			artikelFromUser := Equipments.GetAllBezeichnungenFromKundenEquipment(element.KundeID)
 
 			var EquipmentString = []Bez{}
 
@@ -501,7 +500,7 @@ func adminEditProfile(w http.ResponseWriter, r *http.Request) {
 		EmptySide: false,
 		Profile:   true}
 
-	ClientArr := controller.GetProfile(1)
+	ClientArr := Kunden.GetProfile(1)
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/adminEditProfile.html", "template/header.html", "template/static_imports.html"))
 
@@ -553,7 +552,7 @@ func test(w http.ResponseWriter, r *http.Request) {
 
 	// t.Execute(w,"test")
 
-	EquipmentArr := controller.GetEquipment()
+	EquipmentArr := Equipments.GetEquipment()
 
 	fmt.Println(EquipmentArr)
 
