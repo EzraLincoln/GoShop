@@ -3,53 +3,28 @@ package controller
 import (
 	"../../config"
 	"../model"
-	"net/http"
+	"log"
 )
 
 // type Verleih model.Kunde
 
 type Kunden struct{}
 
-func (v Kunden) RegisterKunden(w http.ResponseWriter, r *http.Request) {
-	userName := r.FormValue("user")
-	email := r.FormValue("mail")
-	password := r.FormValue("psw")
+func (v Kunden) Register_Kunden(user string, mail string, password string) (bool) {
 
-	statement := "insert into Kunde (Benutzername, Passwort, Email) values (?,?,?)"
-	stmt, err := config.Db.Prepare(statement)
-
-	if err != nil {
-		return
-	}
-
-	defer stmt.Close()
-	_, err = stmt.Exec(userName, email, password)
-
-	return
-}
-
-func (v Kunden) GetAllUser() (kunden []model.Kunde) {
-	rows, err := config.Db.Query("select * from Kunde where Typ = 'Benutzer'")
-
-	if err != nil {
-		return
-	}
-
-	for rows.Next() {
-		kunde := model.Kunde{}
-		err = rows.Scan(&kunde.KundeID, &kunde.Benutzername, &kunde.BildUrl, &kunde.Typ, &kunde.Status, &kunde.Email, &kunde.Passwort)
-
-		if err != nil {
-			return
+	if stmt, err := config.Db.Prepare("Insert into Kunde values (?,?,?,?,?,?,?)"); err != nil {
+		return true
+	} else {
+		defer stmt.Close()
+		if _, err = stmt.Exec(nil, user, "Benutzer", "aktiv", password, mail); err != nil {
+			return true
+		} else {
+			return false
 		}
-
-		kunden = append(kunden, kunde)
 	}
-	rows.Close()
-	return
 }
 
-func (v Kunden) GetKundenByID(kunde_id int) (profiles []model.Profile) {
+func (v Kunden) Get_Kunden_By_ID(kunde_id int) (profiles []model.Profile) {
 	rows, err := config.Db.Query("select Kunde.KundeID,Kunde.Benutzername,Kunde.BildUrl,Kunde.Email,Kunde.Status from Kunde WHERE Kunde.KundeID = $1", kunde_id)
 
 	if err != nil {
@@ -69,8 +44,7 @@ func (v Kunden) GetKundenByID(kunde_id int) (profiles []model.Profile) {
 	rows.Close()
 	return
 }
-
-func (v Kunden) GetKundenByName(name string) (profiles []model.Profile) {
+func (v Kunden) Get_Kunden_By_Name(name string) (profiles []model.Profile) {
 	rows, err := config.Db.Query("select Kunde.KundeID,Kunde.Benutzername,Kunde.BildUrl,Kunde.Email,Kunde.Status from Kunde WHERE Kunde.Benutzername= $1", name)
 
 	if err != nil {
@@ -86,6 +60,56 @@ func (v Kunden) GetKundenByName(name string) (profiles []model.Profile) {
 		}
 
 		profiles = append(profiles, profile)
+	}
+	rows.Close()
+	return
+}
+
+func (v Kunden) Get_Kunden_By_Name_Mail(user string, mail string) (bool) {
+
+	var id int
+
+	if config.Db.QueryRow("Select KundeID from Kunde WHERE Kunde.Benutzername= $1 AND Kunde.Email=$2", user, mail).Scan(&id) != nil {
+		return true
+	} else {
+		log.Fatalln("FEHLER", id)
+		return false
+	}
+}
+
+func (v Kunden) Delete_Kunden_By_ID(kunde_id int) (bool) {
+	_, err := config.Db.Query("Delete From Kunde Where Kunde.KundeID = $1", kunde_id)
+	if err != nil {
+		return false
+	} else {
+		return true
+	}
+}
+func (v Kunden) Delete_Kunden_By_Name(name string) (bool) {
+	_, err := config.Db.Query("Delete From Kunde Where Kunde.Benutzername= $1", name)
+	if err != nil {
+		return false
+	} else {
+		return true
+	}
+}
+
+func (v Kunden) Get_Alle_Kunden() (kunden []model.Kunde) {
+	rows, err := config.Db.Query("select * from Kunde where Typ = 'Benutzer'")
+
+	if err != nil {
+		return
+	}
+
+	for rows.Next() {
+		kunde := model.Kunde{}
+		err = rows.Scan(&kunde.KundeID, &kunde.Benutzername, &kunde.BildUrl, &kunde.Typ, &kunde.Status, &kunde.Email, &kunde.Passwort)
+
+		if err != nil {
+			return
+		}
+
+		kunden = append(kunden, kunde)
 	}
 	rows.Close()
 	return

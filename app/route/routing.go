@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/sessions"
 	"golang.org/x/crypto/bcrypt"
 	"encoding/base64"
+	"log"
 )
 
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
@@ -25,13 +26,13 @@ type menu struct {
 	Type      string
 	Profil    bool
 	EmptySide bool
-	Profile   bool
+	Profil   bool
 }
 
-type Clients struct {
-	Items []client
+type KundenCollection struct {
+	Items []Kunde
 }
-type client struct {
+type Kunde struct {
 	BildUrl       string
 	Benutzername  string
 	KundenID      int
@@ -39,21 +40,23 @@ type client struct {
 	Bezeichnungen []Bez
 	Status        string
 }
+
 type Bez struct {
 	Bezeichnung string
 }
+
 type MyEquipment struct {
 	Items []model.MyEquipment
 }
 type AdminEquipments struct {
 	Items []model.AdminEquipments
 }
-type Equipment struct {
+type EquipmentCollection struct {
 	Kategorien []string
 	Items      []model.Equipment
 }
 type Profiles struct {
-	Items []model.Profile
+	Items []model.Profil
 }
 
 var store *sessions.CookieStore
@@ -95,7 +98,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 		Name:      "",
 		Type:      "",
 		EmptySide: false,
-		Profile:   false}
+		Profil:   false}
 
 	// fmt.Println(p)
 
@@ -148,7 +151,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		Name:      "",
 		Type:      "",
 		EmptySide: true,
-		Profile:   false}
+		Profil:   false}
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/header.html", "template/static_imports.html", "template/login.html"))
 
@@ -166,8 +169,6 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 
-		Kunden.RegisterKunden(w, r)
-
 		fmt.Print(r.FormValue("user"))
 		fmt.Print(r.FormValue("mail"))
 		fmt.Print(r.FormValue("password"))
@@ -179,25 +180,21 @@ func register(w http.ResponseWriter, r *http.Request) {
 			mail := r.FormValue("mail")
 			password := r.FormValue("password")
 
-			password,_:= bcrypt.GenerateFromPassword([]byte(password), 4)
-			// b64HashedPwd := base64.StdEncoding.EncodeToString(encPassword)
+			hash, _ := bcrypt.GenerateFromPassword([]byte(password), 4)
 
-			_, err1 := model.ReadClientByName(DB, username)
+			if Kunden.Get_Kunden_By_Name_Mail(user, mail) {
 
-			//Prüfe ob Konte mit dem Benutzernamen bereits vorhanden ist
-			if err1 != nil && password == password_repeat {
-				data :=
-
-				var err error
-				err = model.InsertClient(DB, model.Client{Name: username, Email: email, Password: b64HashedPwd, Avatar: "NoPic.jpg"})
-				if err != nil {
-					fmt.Println("Konto konnte nicht angelegt werden.")
-					fmt.Println(err)
+				if Kunden.Register_Kunden(user, mail, string(hash)) {
+					log.Fatalln("FEHLER")
 				}
-				http.Redirect(w, r, "/login", 301)
+
+				// http.Redirect(w, r, "/login", 301)
+				index(w, r)
+
 			} else {
-				fmt.Println("Benutzername bereits vergeben.")
-				http.Redirect(w, r, "/register", 301)
+
+				// http.Redirect(w, r, "/register", 301)
+				register(w, r)
 			}
 		}
 	} else {
@@ -212,7 +209,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 			Name:      "",
 			Type:      "",
 			EmptySide: true,
-			Profile:   false}
+			Profil:   false}
 
 		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/register.html", "template/static_imports.html", "template/header.html"))
 
@@ -238,7 +235,7 @@ func equipment(w http.ResponseWriter, r *http.Request) {
 		Name:      "", Type: "",
 		Basket:    false,
 		EmptySide: false,
-		Profile:   false}
+		Profil:   false}
 	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 	/// FÜR USER
 	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
@@ -247,7 +244,7 @@ func equipment(w http.ResponseWriter, r *http.Request) {
 		Name:      "", Type: "",
 		Basket:    false,
 		EmptySide: false,
-		Profile:   false}
+		Profil:   false}
 	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
 	fmt.Println(p2)
@@ -345,7 +342,7 @@ func myequipment(w http.ResponseWriter, r *http.Request) {
 		Name:      "",
 		Type:      "",
 		EmptySide: false,
-		Profile:   true}
+		Profil:   true}
 
 	// Alle Artikel von eingeloggtem Kunden -> var logged_id
 	ArtikelArr := Equipments.GetUserEquipment(1)
@@ -372,7 +369,7 @@ func cart(w http.ResponseWriter, r *http.Request) {
 		Name:      "",
 		Type:      "",
 		EmptySide: false,
-		Profile:   true}
+		Profil:   true}
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/equipment.html", "template/header.html", "template/static_imports.html"))
 
@@ -382,9 +379,10 @@ func cart(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "cart", p)
 
 }
-func profile(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println("profile(w http.ResponseWriter, r *http.Request)")
+func profil(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("profil(w http.ResponseWriter, r *http.Request)")
 	fmt.Println()
 
 	p := menu{
@@ -396,9 +394,9 @@ func profile(w http.ResponseWriter, r *http.Request) {
 		Name:      "",
 		Type:      "",
 		EmptySide: false,
-		Profile:   true}
+		Profil:   true}
 
-	ProfilesArr := Kunden.GetProfile(1)
+	ProfilesArr := Kunden.Get_Kunden_By_ID(1)
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/profile.html", "template/header.html", "template/static_imports.html"))
 
@@ -406,7 +404,9 @@ func profile(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "static_imports", p)
 	tmpl.ExecuteTemplate(w, "header", p)
 
-	tmpl.ExecuteTemplate(w, "profile", Profiles{Items: ProfilesArr})
+	//tmpl.ExecuteTemplate(w, "profile", Profiles{Items: ProfilesArr})
+
+	tmpl.ExecuteTemplate(w, "profile", {Kategorien: []string{"Kameras", "Mikrofone", "Monitore", "Beleuchtung"}, Items: EquipmentArr})
 
 }
 
@@ -686,7 +686,7 @@ func Handler() {
 	http.HandleFunc("/login", login)
 	http.HandleFunc("/equipment", equipment)
 	http.HandleFunc("/myequipment", myequipment)
-	http.HandleFunc("/profile", profile)
+	http.HandleFunc("/profil", profil)
 	http.HandleFunc("/register", register)
 	http.HandleFunc("/cart", cart)
 
