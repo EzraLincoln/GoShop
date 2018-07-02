@@ -7,9 +7,9 @@ import (
 	"html/template"
 	"net/http"
 	"strings"
-
-	"github.com/gorilla/sessions"
+	"../../config"
 	"golang.org/x/crypto/bcrypt"
+	"strconv"
 )
 
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
@@ -63,8 +63,6 @@ type EquipmentCollection struct {
 	Kategorien []string
 	Items      []model.Equipment
 }
-
-var store *sessions.CookieStore
 
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
@@ -149,27 +147,41 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 
+		session, _ := config.CookieStore.Get(r, "session")
+
 		user := r.FormValue("user")
 		password := r.FormValue("password")
 
-		hash, _ := bcrypt.GenerateFromPassword([]byte(password), 4)
-
-		fmt.Println("User : ", user, " Password : ", password)
+		fmt.Println("User : ", user, "\n")
+		fmt.Println(" Clear Password : ", password, "\n")
 
 		result := Kunden.Get_Kunden_By_Name(user)
 
-		if result == "" {
+		if result.Passwort == "" {
 			fmt.Println("Kunde in der DB nicht gefunden.")
 			http.Redirect(w, r, "/login", 301)
 		} else {
 
-			fmt.Println(result)
-			passwordDB := []byte(result)
+			fmt.Println("KUNDEN GEFUNDEN")
+			fmt.Println(result, "\n")
+			passwordDB := []byte(result.Passwort)
 
-			fmt.Println(passwordDB)
-			fmt.Println(hash)
+			compr := bcrypt.CompareHashAndPassword(passwordDB, []byte(password))
 
-			bcrypt.CompareHashAndPassword(passwordDB, hash)
+			if compr == nil {
+
+				fmt.Println("compare -> nil")
+
+				session.Values["logged"] = true
+				session.Values["ID"] = result.KundenID
+				session.Save(r, w)
+
+				fmt.Println("\nWeiterleitung nach /Profil\n")
+
+				http.Redirect(w, r, "/profil", 301)
+			} else {
+				fmt.Println("compare not nil")
+			}
 
 			// http.Redirect(w, r, "/register", 301)
 		}
@@ -208,9 +220,9 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 		hash, _ := bcrypt.GenerateFromPassword([]byte(password), 4)
 
-		fmt.Println("User : ", user)
-		fmt.Println("Mail : ", mail)
-		fmt.Println("Password : ", hash)
+		fmt.Println("User : ", user, "\n")
+		fmt.Println("Mail : ", mail, "\n")
+		fmt.Println("Password : ", hash, "\n")
 
 		if Kunden.Test_For_Kunden_By_Name_Mail(user, mail) {
 
@@ -296,6 +308,7 @@ func equipment(w http.ResponseWriter, r *http.Request) {
 
 }
 
+/*
 func equipmentAlternative(w http.ResponseWriter, r *http.Request) {
 
 	session, _ := store.Get(r, "session")
@@ -355,6 +368,7 @@ func equipmentAlternative(w http.ResponseWriter, r *http.Request) {
 	// tmpl, _ := template.ParseFiles("template/equipment.html", "template/head.html", "template/foot.html")
 	// tmpl.Execute(w, p)
 }
+*/
 
 func user_Meine_Geräte(w http.ResponseWriter, r *http.Request) {
 
@@ -409,10 +423,12 @@ func cart(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func user_profil(w http.ResponseWriter, r *http.Request) {
+func profil(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("profil(w http.ResponseWriter, r *http.Request)")
-	fmt.Println()
+	fmt.Println("/n/n---------------------------------------------------/n/n")
+
+	session, _ := config.CookieStore.Get(r, "session")
 
 	p := menu{
 		Title:     "borgdir.media,index",
@@ -425,17 +441,42 @@ func user_profil(w http.ResponseWriter, r *http.Request) {
 		EmptySide: false,
 		Profil:    true}
 
-	request := Kunden.Get_Kunden_By_ID(1)
+	auth, ok := session.Values["logged"];
+	fmt.Println("auth :", auth)
+	fmt.Println("ok :", ok)
 
-	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/profile.html", "template/header.html", "template/static_imports.html"))
+	// auth, ok = session.Values["logged"].(bool);
 
-	tmpl.ExecuteTemplate(w, "main", p)
-	tmpl.ExecuteTemplate(w, "static_imports", p)
-	tmpl.ExecuteTemplate(w, "header", p)
+	// fmt.Println("Bool Type Assertion !");
 
-	//tmpl.ExecuteTemplate(w, "profile", Profiles{Items: ProfilesArr})
+	if !(ok) || !(auth.(bool)) {
+		http.Redirect(w, r, "/login", 301)
+	} else {
 
-	tmpl.ExecuteTemplate(w, "profile", request)
+		fmt.Println("/n/n---------------------------------------------------/n/n")
+		fmt.Println("session.Values  :  ", session.Values)
+		fmt.Println("session.Values[KundenID]  :  ", session.Values["KundenID"])
+		fmt.Println("session.Values[KundenID].(int)  :  ", session.Values["KundenID"].(string))
+		fmt.Println("/n/n---------------------------------------------------/n/n")
+
+		kunden_id, err := strconv.Atoi(session.Values["KundenID"].(string))
+
+		if err != nil { fmt.Println(err) }
+
+		client := Kunden.Get_Kunden_By_ID(kunden_id)
+
+		// request := Kunden.Get_Kunden_By_ID(1)
+
+		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/profile.html", "template/header.html", "template/static_imports.html"))
+
+		tmpl.ExecuteTemplate(w, "main", p)
+		tmpl.ExecuteTemplate(w, "static_imports", p)
+		tmpl.ExecuteTemplate(w, "header", p)
+
+		//tmpl.ExecuteTemplate(w, "profile", Profiles{Items: ProfilesArr})
+
+		tmpl.ExecuteTemplate(w, "profile", client)
+	}
 }
 
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
@@ -587,7 +628,7 @@ func admin_Kunden_Verwalten(w http.ResponseWriter, r *http.Request) {
 
 		for _, element := range KundenArr {
 
-			artikelFromUser := Equipments.GetUserEquipment(element.KundeID)
+			artikelFromUser := Equipments.GetUserEquipment(element.KundenID)
 
 			var EquipmentString = []Bez{}
 
@@ -596,7 +637,7 @@ func admin_Kunden_Verwalten(w http.ResponseWriter, r *http.Request) {
 				EquipmentString = append(EquipmentString, Bez{element.Bezeichnung})
 			}
 
-			ClientsArr = append(ClientsArr, Client{element.BildUrl, element.Benutzername, element.KundeID, element.Typ, EquipmentString, element.Status})
+			ClientsArr = append(ClientsArr, Client{element.BildUrl, element.Benutzername, element.KundenID, element.Typ, EquipmentString, element.Status})
 		}
 
 		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/clients.html", "template/header.html", "template/static_imports.html"))
@@ -611,7 +652,6 @@ func admin_Kunden_Verwalten(w http.ResponseWriter, r *http.Request) {
 }
 
 func admin_Kunden_Bearbeiten(w http.ResponseWriter, r *http.Request) {
-
 	fmt.Println("adminEditProfile(w http.ResponseWriter, r *http.Request)")
 	fmt.Println()
 
@@ -639,7 +679,6 @@ func admin_Kunden_Bearbeiten(w http.ResponseWriter, r *http.Request) {
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
 func test(w http.ResponseWriter, r *http.Request) {
-
 	fmt.Println("test(w,r)")
 	fmt.Println()
 
@@ -697,7 +736,8 @@ func test(w http.ResponseWriter, r *http.Request) {
 
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
-func Handler() {
+func
+Handler() {
 
 	///////////////////////////////////////////////////////////////////////////////////////
 	http.HandleFunc("/", index)
@@ -715,7 +755,7 @@ func Handler() {
 	http.HandleFunc("/equipment", equipment)
 	///////////////////////////////////////////////////////////////////////////////////////
 	http.HandleFunc("/myequipment", user_Meine_Geräte)
-	http.HandleFunc("/profil", user_profil)
+	http.HandleFunc("/profil", profil)
 	///////////////////////////////////////////////////////////////////////////////////////
 	http.HandleFunc("/test", test)
 

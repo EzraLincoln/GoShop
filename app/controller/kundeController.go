@@ -26,7 +26,7 @@ func (v Kunden) Register_Kunden(user string, mail string, password string) (bool
 }
 
 func (v Kunden) Get_Kunden_By_ID(kunde_id int) (kunden []model.Kunde) {
-	rows, err := config.Db.Query("select Kunde.KundeID,Kunde.Benutzername,Kunde.BildUrl,Kunde.Email,Kunde.Status from Kunde WHERE Kunde.KundeID = $1", kunde_id)
+	rows, err := config.Db.Query("select Kunde.KundenID,Kunde.Benutzername,Kunde.BildUrl,Kunde.Email,Kunde.Status from Kunde WHERE Kunde.KundenID = $1", kunde_id)
 
 	if err != nil {
 		return
@@ -34,7 +34,7 @@ func (v Kunden) Get_Kunden_By_ID(kunde_id int) (kunden []model.Kunde) {
 	for rows.Next() {
 		kunde := model.Kunde{}
 
-		err = rows.Scan(&kunde.KundeID, &kunde.Benutzername, &kunde.BildUrl, &kunde.Email, &kunde.Status)
+		err = rows.Scan(&kunde.KundenID, &kunde.Benutzername, &kunde.BildUrl, &kunde.Email, &kunde.Status)
 
 		if err != nil {
 			return
@@ -46,10 +46,22 @@ func (v Kunden) Get_Kunden_By_ID(kunde_id int) (kunden []model.Kunde) {
 	return
 }
 
-func (v Kunden) Get_Kunden_By_Name(name string) (password string) {
+func (v Kunden) Get_Kunden_By_Name(name string) (*model.Kunde) {
 
 	fmt.Println("Suche nach ", name)
 
+	kunde := model.Kunde{}
+
+	result := config.Db.QueryRow("Select * from Kunde WHERE Kunde.Benutzername= $1",name)
+
+	if result.Scan(&kunde.KundenID,&kunde.Benutzername,&kunde.BildUrl,&kunde.Typ,&kunde.Status,&kunde.Passwort,&kunde.Email) != nil {
+		return nil
+	} else {
+		return &kunde
+	}
+
+
+	/*
 	request,_ := config.Db.Query("SELECT Passwort from Kunde WHERE Benutzername = $1", name)
 
 	fmt.Println("Password : " ,password)
@@ -65,13 +77,15 @@ func (v Kunden) Get_Kunden_By_Name(name string) (password string) {
 
 	return password
 
+	*/
+
 }
 
 func (v Kunden) Test_For_Kunden_By_Name_Mail(user string, mail string) (bool) {
 
 	var id int
 
-	if config.Db.QueryRow("Select KundeID from Kunde WHERE Kunde.Benutzername= $1 AND Kunde.Email=$2", user, mail).Scan(&id) != nil {
+	if config.Db.QueryRow("Select KundenID from Kunde WHERE Kunde.Benutzername= $1 AND Kunde.Email=$2", user, mail).Scan(&id) != nil {
 		return true
 	} else {
 		return false
@@ -79,7 +93,7 @@ func (v Kunden) Test_For_Kunden_By_Name_Mail(user string, mail string) (bool) {
 }
 
 func (v Kunden) Delete_Kunden_By_ID(kunde_id int) (bool) {
-	_, err := config.Db.Query("Delete From Kunde Where Kunde.KundeID = $1", kunde_id)
+	_, err := config.Db.Query("Delete From Kunde Where Kunde.KundenID = $1", kunde_id)
 	if err != nil {
 		return false
 	} else {
@@ -104,7 +118,7 @@ func (v Kunden) Get_Alle_Kunden() (kunden []model.Kunde) {
 
 	for rows.Next() {
 		kunde := model.Kunde{}
-		err = rows.Scan(&kunde.KundeID, &kunde.Benutzername, &kunde.BildUrl, &kunde.Typ, &kunde.Status, &kunde.Email, &kunde.Passwort)
+		err = rows.Scan(&kunde.KundenID, &kunde.Benutzername, &kunde.BildUrl, &kunde.Typ, &kunde.Status, &kunde.Email, &kunde.Passwort)
 
 		if err != nil {
 			return
