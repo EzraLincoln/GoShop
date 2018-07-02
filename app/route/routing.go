@@ -14,15 +14,16 @@ import (
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
 type menu struct {
-	Title  string
-	Item1  string
-	Item2  string
-	Item3  string
-	Basket bool
-	Name   string
-	Type   string
+	Title     string
+	Item1     string
+	Item2     string
+	Item3     string
+	Basket    bool
+	Name      string
+	Type      string
 	Profil    bool
-	SecondCart bool
+	EmptySide bool
+	Profile   bool
 }
 
 type Client_Collection struct {
@@ -98,9 +99,8 @@ func index(w http.ResponseWriter, r *http.Request) {
 		Basket:    false,
 		Name:      "",
 		Type:      "",
-		Profil:    false,
-		SecondCart: true,
-		}
+		EmptySide: false,
+		Profile:   false}
 
 	// fmt.Println(p)
 
@@ -187,15 +187,15 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	p := menu{
-		Title:     "borgdir.media,index",
+		Title:     "borgdir.media, index",
 		Item1:     "Equipment,equipment",
 		Item2:     "Login,login",
 		Item3:     "",
 		Basket:    false,
 		Name:      "",
 		Type:      "",
-		SecondCart: true,
-		Profil:    false}
+		EmptySide: false,
+		Profile:   false}
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/header.html", "template/static_imports.html", "template/login.html"))
 
@@ -241,15 +241,15 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 	// REGISTER
 	p := menu{
-		Title:     "borgdir.media,index",
+		Title:     "borgdir.media, index",
 		Item1:     "Equipment,equipment",
 		Item2:     "Login,login",
 		Item3:     "",
 		Basket:    false,
 		Name:      "",
 		Type:      "",
-		SecondCart: true,
-		Profil:    false}
+		EmptySide: false,
+		Profile:   false}
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/register.html", "template/static_imports.html", "template/header.html"))
 
@@ -273,7 +273,7 @@ func equipment(w http.ResponseWriter, r *http.Request) {
 		Title:     "borgdir.media,index", Item1: "Equipment,equipment", Item2: "Meine Geräte,myequipment", Item3: "Logout,logout",
 		Name:      "", Type: "",
 		Basket:    false,
-		SecondCart: false,
+		EmptySide: false,
 		Profil:    false}
 	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 	/// FÜR USER
@@ -282,7 +282,7 @@ func equipment(w http.ResponseWriter, r *http.Request) {
 		Title:     "borgdir.media,index", Item1: "Equipment,equipment", Item2: "Meine Geräte,myequipment", Item3: "Logout,logout",
 		Name:      "", Type: "",
 		Basket:    false,
-		SecondCart: false,
+		EmptySide: false,
 		Profil:    false}
 	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
@@ -382,7 +382,7 @@ func Meine_Geräte(w http.ResponseWriter, r *http.Request) {
 		Basket:    true,
 		Name:      "",
 		Type:      "",
-		SecondCart: false,
+		EmptySide: false,
 		Profil:    true}
 
 	// Alle Artikel von eingeloggtem Kunden -> var logged_id
@@ -410,7 +410,7 @@ func Warenkorb(w http.ResponseWriter, r *http.Request) {
 		Basket:    true,
 		Name:      "",
 		Type:      "",
-		SecondCart: false,
+		EmptySide: false,
 		Profil:    true}
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/equipment.html", "template/header.html", "template/static_imports.html"))
@@ -437,7 +437,7 @@ func Profil(w http.ResponseWriter, r *http.Request) {
 		Basket:    true,
 		Name:      "Hallo Welt",
 		Type:      "Benutzer",
-		SecondCart: false,
+		EmptySide: false,
 		Profil:    true}
 
 	auth, ok := session.Values["logged"];
@@ -485,7 +485,7 @@ func admin(w http.ResponseWriter, r *http.Request) {
 		Basket:    false,
 		Name:      "Peter",
 		Type:      "Verleiher",
-		SecondCart: false,
+		EmptySide: false,
 		Profil:    true}
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/admin.html", "template/header.html", "template/static_imports.html"))
@@ -511,7 +511,7 @@ func admin_Equipment(w http.ResponseWriter, r *http.Request) {
 		Basket:    false,
 		Name:      "",
 		Type:      "",
-		SecondCart: false,
+		EmptySide: false,
 		Profil:    true}
 
 	// ArtikelArr := Equipments.Get_Alle_Equipment()
@@ -543,7 +543,7 @@ func admin_Equipment_Hinzufügen(w http.ResponseWriter, r *http.Request) {
 			Basket:    false,
 			Name:      "",
 			Type:      "",
-			SecondCart: false,
+			EmptySide: false,
 			Profil:    true}
 
 		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/admin_Equipment_Hinzufügen.html", "template/header.html", "template/static_imports.html"))
@@ -574,7 +574,7 @@ func admin_Equipment_Bearbeiten(w http.ResponseWriter, r *http.Request) {
 			Basket:    false,
 			Name:      "",
 			Type:      "",
-			SecondCart: false,
+			EmptySide: false,
 			Profil:    true}
 
 		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/admin_Equipment_Bearbeiten.html", "template/header.html", "template/static_imports.html"))
@@ -609,7 +609,7 @@ func admin_Kunden_Verwalten(w http.ResponseWriter, r *http.Request) {
 			Basket:    false,
 			Name:      "",
 			Type:      "",
-			SecondCart: false,
+			EmptySide: false,
 			Profil:    true}
 
 		ClientsArr := []Client{}
@@ -654,7 +654,7 @@ func admin_Kunden_Bearbeiten(w http.ResponseWriter, r *http.Request) {
 		Basket:    false,
 		Name:      "",
 		Type:      "",
-		SecondCart: false,
+		EmptySide: false,
 		Profil:    true}
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/adminEditClients.html", "template/header.html", "template/static_imports.html"))
