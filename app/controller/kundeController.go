@@ -25,25 +25,18 @@ func (v Kunden) Register_Kunden(user string, mail string, password string) (bool
 	}
 }
 
-func (v Kunden) Get_Kunden_By_ID(kunde_id int) (kunden []model.Kunde) {
-	rows, err := config.Db.Query("select Kunde.KundenID,Kunde.Benutzername,Kunde.BildUrl,Kunde.Email,Kunde.Status from Kunde WHERE Kunde.KundenID = $1", kunde_id)
+func (v Kunden) Get_Kunden_By_ID(kunde_id int) (*model.Kunde) {
 
-	if err != nil {
-		return
+	result := config.Db.QueryRow("Select * From Kunde Where KundenID = $1", kunde_id)
+
+	kunde := model.Kunde{}
+
+	if result.Scan(&kunde.KundenID, &kunde.Benutzername, &kunde.BildUrl, &kunde.Typ, &kunde.Status, &kunde.Passwort, &kunde.Email) != nil {
+		return nil
+	} else {
+		return &kunde
 	}
-	for rows.Next() {
-		kunde := model.Kunde{}
 
-		err = rows.Scan(&kunde.KundenID, &kunde.Benutzername, &kunde.BildUrl, &kunde.Email, &kunde.Status)
-
-		if err != nil {
-			return
-		}
-
-		kunden = append(kunden, kunde)
-	}
-	rows.Close()
-	return
 }
 
 func (v Kunden) Get_Kunden_By_Name(name string) (*model.Kunde) {
@@ -52,32 +45,13 @@ func (v Kunden) Get_Kunden_By_Name(name string) (*model.Kunde) {
 
 	kunde := model.Kunde{}
 
-	result := config.Db.QueryRow("Select * from Kunde WHERE Kunde.Benutzername= $1",name)
+	result := config.Db.QueryRow("Select * from Kunde WHERE Kunde.Benutzername= $1", name)
 
-	if result.Scan(&kunde.KundenID,&kunde.Benutzername,&kunde.BildUrl,&kunde.Typ,&kunde.Status,&kunde.Passwort,&kunde.Email) != nil {
+	if result.Scan(&kunde.KundenID, &kunde.Benutzername, &kunde.BildUrl, &kunde.Typ, &kunde.Status, &kunde.Passwort, &kunde.Email) != nil {
 		return nil
 	} else {
 		return &kunde
 	}
-
-
-	/*
-	request,_ := config.Db.Query("SELECT Passwort from Kunde WHERE Benutzername = $1", name)
-
-	fmt.Println("Password : " ,password)
-	err := request.Scan(password)
-
-	if (err != nil) {
-		return ""
-	}
-
-	request.Close()
-
-	fmt.Println("Password : " ,password)
-
-	return password
-
-	*/
 
 }
 
@@ -110,7 +84,7 @@ func (v Kunden) Delete_Kunden_By_Name(name string) (bool) {
 }
 
 func (v Kunden) Get_Alle_Kunden() (kunden []model.Kunde) {
-	rows, err := config.Db.Query("select * from Kunde where Typ = 'Benutzer'")
+	rows, err := config.Db.Query("Select * From Kunde Where Typ = 'Benutzer'")
 
 	if err != nil {
 		return
@@ -118,7 +92,7 @@ func (v Kunden) Get_Alle_Kunden() (kunden []model.Kunde) {
 
 	for rows.Next() {
 		kunde := model.Kunde{}
-		err = rows.Scan(&kunde.KundenID, &kunde.Benutzername, &kunde.BildUrl, &kunde.Typ, &kunde.Status, &kunde.Email, &kunde.Passwort)
+		err = rows.Scan(&kunde.KundenID, &kunde.Benutzername, &kunde.BildUrl, &kunde.Typ, &kunde.Status, &kunde.Passwort, &kunde.Email)
 
 		if err != nil {
 			return

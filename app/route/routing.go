@@ -9,7 +9,6 @@ import (
 	"strings"
 	"../../config"
 	"golang.org/x/crypto/bcrypt"
-	"strconv"
 )
 
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
@@ -22,9 +21,8 @@ type menu struct {
 	Basket bool
 	Name   string
 	Type   string
-	// Profil    bool
-	EmptySide bool
 	Profil    bool
+	SecondCart bool
 }
 
 type Client_Collection struct {
@@ -100,8 +98,9 @@ func index(w http.ResponseWriter, r *http.Request) {
 		Basket:    false,
 		Name:      "",
 		Type:      "",
-		EmptySide: false,
-		Profil:    false}
+		Profil:    false,
+		SecondCart: true,
+		}
 
 	// fmt.Println(p)
 
@@ -173,7 +172,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 				fmt.Println("compare -> nil")
 
 				session.Values["logged"] = true
-				session.Values["ID"] = result.KundenID
+				session.Values["KundenID"] = result.KundenID
 				session.Save(r, w)
 
 				fmt.Println("\nWeiterleitung nach /Profil\n")
@@ -195,7 +194,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		Basket:    false,
 		Name:      "",
 		Type:      "",
-		EmptySide: true,
+		SecondCart: true,
 		Profil:    false}
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/header.html", "template/static_imports.html", "template/login.html"))
@@ -249,7 +248,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 		Basket:    false,
 		Name:      "",
 		Type:      "",
-		EmptySide: true,
+		SecondCart: true,
 		Profil:    false}
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/register.html", "template/static_imports.html", "template/header.html"))
@@ -274,7 +273,7 @@ func equipment(w http.ResponseWriter, r *http.Request) {
 		Title:     "borgdir.media,index", Item1: "Equipment,equipment", Item2: "Meine Geräte,myequipment", Item3: "Logout,logout",
 		Name:      "", Type: "",
 		Basket:    false,
-		EmptySide: false,
+		SecondCart: false,
 		Profil:    false}
 	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 	/// FÜR USER
@@ -283,7 +282,7 @@ func equipment(w http.ResponseWriter, r *http.Request) {
 		Title:     "borgdir.media,index", Item1: "Equipment,equipment", Item2: "Meine Geräte,myequipment", Item3: "Logout,logout",
 		Name:      "", Type: "",
 		Basket:    false,
-		EmptySide: false,
+		SecondCart: false,
 		Profil:    false}
 	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
@@ -370,7 +369,7 @@ func equipmentAlternative(w http.ResponseWriter, r *http.Request) {
 }
 */
 
-func user_Meine_Geräte(w http.ResponseWriter, r *http.Request) {
+func Meine_Geräte(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("myequipment(w http.ResponseWriter, r *http.Request)")
 	fmt.Println()
@@ -383,7 +382,7 @@ func user_Meine_Geräte(w http.ResponseWriter, r *http.Request) {
 		Basket:    true,
 		Name:      "",
 		Type:      "",
-		EmptySide: false,
+		SecondCart: false,
 		Profil:    true}
 
 	// Alle Artikel von eingeloggtem Kunden -> var logged_id
@@ -398,9 +397,9 @@ func user_Meine_Geräte(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func cart(w http.ResponseWriter, r *http.Request) {
+func Warenkorb(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println("cart(w http.ResponseWriter, r *http.Request)")
+	fmt.Println("Warenkorb(w http.ResponseWriter, r *http.Request)")
 	fmt.Println()
 
 	p := menu{
@@ -411,7 +410,7 @@ func cart(w http.ResponseWriter, r *http.Request) {
 		Basket:    true,
 		Name:      "",
 		Type:      "",
-		EmptySide: false,
+		SecondCart: false,
 		Profil:    true}
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/equipment.html", "template/header.html", "template/static_imports.html"))
@@ -419,13 +418,13 @@ func cart(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "main", p)
 	tmpl.ExecuteTemplate(w, "static_imports", p)
 	tmpl.ExecuteTemplate(w, "header", p)
-	tmpl.ExecuteTemplate(w, "cart", p)
+	tmpl.ExecuteTemplate(w, "Warenkorb", p)
 
 }
 
-func profil(w http.ResponseWriter, r *http.Request) {
+func Profil(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println("profil(w http.ResponseWriter, r *http.Request)")
+	fmt.Println("Profil(w http.ResponseWriter, r *http.Request)")
 	fmt.Println("/n/n---------------------------------------------------/n/n")
 
 	session, _ := config.CookieStore.Get(r, "session")
@@ -436,9 +435,9 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		Item2:     "Meine Geräte,myequipment",
 		Item3:     "Logout,logout",
 		Basket:    true,
-		Name:      "",
-		Type:      "",
-		EmptySide: false,
+		Name:      "Hallo Welt",
+		Type:      "Benutzer",
+		SecondCart: false,
 		Profil:    true}
 
 	auth, ok := session.Values["logged"];
@@ -454,18 +453,10 @@ func profil(w http.ResponseWriter, r *http.Request) {
 	} else {
 
 		fmt.Println("/n/n---------------------------------------------------/n/n")
-		fmt.Println("session.Values  :  ", session.Values)
-		fmt.Println("session.Values[KundenID]  :  ", session.Values["KundenID"])
-		fmt.Println("session.Values[KundenID].(int)  :  ", session.Values["KundenID"].(string))
-		fmt.Println("/n/n---------------------------------------------------/n/n")
 
-		kunden_id, err := strconv.Atoi(session.Values["KundenID"].(string))
+		kunden_id_int := session.Values["KundenID"].(int)
 
-		if err != nil { fmt.Println(err) }
-
-		client := Kunden.Get_Kunden_By_ID(kunden_id)
-
-		// request := Kunden.Get_Kunden_By_ID(1)
+		client := Kunden.Get_Kunden_By_ID(kunden_id_int)
 
 		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/profile.html", "template/header.html", "template/static_imports.html"))
 
@@ -494,7 +485,7 @@ func admin(w http.ResponseWriter, r *http.Request) {
 		Basket:    false,
 		Name:      "Peter",
 		Type:      "Verleiher",
-		EmptySide: false,
+		SecondCart: false,
 		Profil:    true}
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/admin.html", "template/header.html", "template/static_imports.html"))
@@ -520,7 +511,7 @@ func admin_Equipment(w http.ResponseWriter, r *http.Request) {
 		Basket:    false,
 		Name:      "",
 		Type:      "",
-		EmptySide: false,
+		SecondCart: false,
 		Profil:    true}
 
 	// ArtikelArr := Equipments.Get_Alle_Equipment()
@@ -552,7 +543,7 @@ func admin_Equipment_Hinzufügen(w http.ResponseWriter, r *http.Request) {
 			Basket:    false,
 			Name:      "",
 			Type:      "",
-			EmptySide: false,
+			SecondCart: false,
 			Profil:    true}
 
 		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/admin_Equipment_Hinzufügen.html", "template/header.html", "template/static_imports.html"))
@@ -583,7 +574,7 @@ func admin_Equipment_Bearbeiten(w http.ResponseWriter, r *http.Request) {
 			Basket:    false,
 			Name:      "",
 			Type:      "",
-			EmptySide: false,
+			SecondCart: false,
 			Profil:    true}
 
 		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/admin_Equipment_Bearbeiten.html", "template/header.html", "template/static_imports.html"))
@@ -618,7 +609,7 @@ func admin_Kunden_Verwalten(w http.ResponseWriter, r *http.Request) {
 			Basket:    false,
 			Name:      "",
 			Type:      "",
-			EmptySide: false,
+			SecondCart: false,
 			Profil:    true}
 
 		ClientsArr := []Client{}
@@ -663,16 +654,18 @@ func admin_Kunden_Bearbeiten(w http.ResponseWriter, r *http.Request) {
 		Basket:    false,
 		Name:      "",
 		Type:      "",
-		EmptySide: false,
+		SecondCart: false,
 		Profil:    true}
 
-	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/adminEditProfile.html", "template/header.html", "template/static_imports.html"))
+	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/adminEditClients.html", "template/header.html", "template/static_imports.html"))
 
 	tmpl.ExecuteTemplate(w, "main", p)
 	tmpl.ExecuteTemplate(w, "static_imports", p)
 	tmpl.ExecuteTemplate(w, "header", p)
 
-	tmpl.ExecuteTemplate(w, "adminEditProfile", Kunden.Get_Kunden_By_ID(1))
+	kunde := Kunden.Get_Kunden_By_ID(1)
+
+	tmpl.ExecuteTemplate(w, "adminEditClients", kunde)
 
 }
 
@@ -690,7 +683,7 @@ func test(w http.ResponseWriter, r *http.Request) {
 	Basket:    false,
 	Name:      "",
 	Type:      "",
-	EmptySide: false,
+	SecondCart: false,
 	Profile:   false}
 	*/
 
@@ -751,11 +744,11 @@ Handler() {
 	http.HandleFunc("/login", login)
 	http.HandleFunc("/register", register)
 	///////////////////////////////////////////////////////////////////////////////////////
-	http.HandleFunc("/cart", cart)
+	http.HandleFunc("/Warenkorb", Warenkorb)
 	http.HandleFunc("/equipment", equipment)
 	///////////////////////////////////////////////////////////////////////////////////////
-	http.HandleFunc("/myequipment", user_Meine_Geräte)
-	http.HandleFunc("/profil", profil)
+	http.HandleFunc("/myequipment", Meine_Geräte)
+	http.HandleFunc("/profil", Profil)
 	///////////////////////////////////////////////////////////////////////////////////////
 	http.HandleFunc("/test", test)
 
