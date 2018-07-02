@@ -1,11 +1,9 @@
 {{define "myequipment"}}
 <div class="container mt-5">
 
-    <h4 class="">Meine Geräte</h4>
+    <h1 class="mr-0">Meine Geräte</h1>
 
-    <br>
-
-    <div class="row bottom-border cursiv-text bold-text">
+    <div class="row mt-5 bottom-border cursiv-text bold-medium-text">
         <div class="col-md-3">
             Equipment
         </div>
@@ -23,8 +21,7 @@
         </div>
     </div>
 
-    <br>
-    {{range .Items}}
+{{range .Items}}
     <div class="row equipment-row">
         <div class="col-md-3">
             <div class="row">
@@ -57,9 +54,66 @@
             <button type="button" class="btn btn-default red-background"></button>
         </div>
     </div>
-    {{end}}
+{{end}}
 
+    <br><br>
 
+    <h1 class="mr-0 mt-5">Vorgemerkt</h1>
+
+{{/*{{if .Items2}}*/}}
+    <div class="row mt-5 bottom-border cursiv-text bold-medium-text">
+        <div class="col-md-3">
+            Equipment
+        </div>
+        <div class="col-md-3">
+            Beschreibung
+        </div>
+        <div class="col-md-2 centered-text">
+            Rückgabe vsl.
+        </div>
+        <div class="col-md-2 centered-text">
+        </div>
+        <div class="col-md-2">
+            <p class="centered-text">Entfernen</p>
+        </div>
+    </div>
+
+{{range .Items2}}
+    <div class="row equipment-row">
+        <div class="col-md-3">
+            <div class="row">
+                <div class="col-md-4">
+                    <img class="equipment-image" src="static/images/{{.BildURL}}">
+                </div>
+                <div class="col-md-6">
+                    <div class="row equipment-label">
+                        <p class="bold-medium-text minimal-margin equipment-label">{{.Bezeichnung}}</p>
+                    </div>
+                    <div class="row">
+                        <p class="small-text cursiv-text">Inv.Nr. {{.InventarNummer}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 text-spalte">
+            <p>{{.Hinweis}}</p>
+        </div>
+
+        <div class="col-md-2">
+            <p class="minimal-margin cursiv-text centered-text">{{.Beginn}}</p>
+        </div>
+
+        <div class="col-md-2">
+            <p class="minimal-margin red-text cursiv-text centered-text">{{.Rueckgabe}}</p>
+        </div>
+
+        <div class="col-md-2 text-center">
+            <button type="button" class="btn btn-default red-background"></button>
+        </div>
+    </div>
+{{end}}
+
+{{/*{{end}}*/}}
 
 
     <!--
@@ -113,4 +167,16 @@
         -->
 
 </div>
+
+<script>
+
+    alert("Sie haben noch kein Equipment ausgeliehen/vorgemerkt.");
+
+{{if .Items2}}
+{{else}}
+alert("Sie haben noch kein Equipment ausgeliehen/vorgemerkt.");
+{{end}}
+
+</script>
+
 {{end}}

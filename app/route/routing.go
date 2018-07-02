@@ -14,16 +14,17 @@ import (
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
 type menu struct {
-	Title     string
-	Item1     string
-	Item2     string
-	Item3     string
-	Basket    bool
-	Name      string
-	Type      string
-	Profil    bool
-	EmptySide bool
-	Profile   bool
+	Title      string
+	Item1      string
+	Item2      string
+	Item3      string
+	Basket     bool
+	Name       string
+	Type       string
+	Profil     bool
+	EmptySide  bool
+	Profile    bool
+	ProfilBild string
 }
 
 type Client_Collection struct {
@@ -78,8 +79,6 @@ var funcMap = template.FuncMap{
 	},
 }
 
-//var artikelList = make(model.Artikels)
-
 var Equipments = controller.Equipments{}
 var Kunden = controller.Kunden{}
 var Verleihe = controller.Verleihe{}
@@ -93,14 +92,11 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 	p := menu{
 		Title:     "borgdir.media, index",
-		Item1:     "Equipment,equipment",
-		Item2:     "Login,login",
-		Item3:     "",
+		Item1:     "Equipment,equipment", Item2: "Login,login", Item3: "",
 		Basket:    false,
-		Name:      "",
-		Type:      "",
+		Name:      "", Type: "",
 		EmptySide: false,
-		Profile:   false}
+		Profile:   false, ProfilBild: ""}
 
 	// fmt.Println(p)
 
@@ -188,14 +184,11 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 	p := menu{
 		Title:     "borgdir.media, index",
-		Item1:     "Equipment,equipment",
-		Item2:     "Login,login",
-		Item3:     "",
+		Item1:     "Equipment,equipment", Item2: "Login,login", Item3: "",
 		Basket:    false,
-		Name:      "",
-		Type:      "",
+		Name:      "", Type: "",
 		EmptySide: false,
-		Profile:   false}
+		Profile:   false, ProfilBild: ""}
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/header.html", "template/static_imports.html", "template/login.html"))
 
@@ -242,14 +235,11 @@ func register(w http.ResponseWriter, r *http.Request) {
 	// REGISTER
 	p := menu{
 		Title:     "borgdir.media, index",
-		Item1:     "Equipment,equipment",
-		Item2:     "Login,login",
-		Item3:     "",
+		Item1:     "Equipment,equipment", Item2: "Login,login", Item3: "",
 		Basket:    false,
-		Name:      "",
-		Type:      "",
+		Name:      "", Type: "",
 		EmptySide: false,
-		Profile:   false}
+		Profile:   false, ProfilBild: ""}
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/register.html", "template/static_imports.html", "template/header.html"))
 
@@ -270,20 +260,19 @@ func equipment(w http.ResponseWriter, r *http.Request) {
 	/// FÜR GÄSTE OHNE EINGELOGGT
 	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 	p := menu{
-		Title:     "borgdir.media,index", Item1: "Equipment,equipment", Item2: "Meine Geräte,myequipment", Item3: "Logout,logout",
+		Item1: "Login,login", Item2: "Registrieren,register", Item3: "",
 		Name:      "", Type: "",
-		Basket:    false,
-		EmptySide: false,
-		Profil:    false}
+		Basket:    false,EmptySide: false,Profil:    false, ProfilBild: ""}
 	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 	/// FÜR USER
 	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 	p2 := menu{
-		Title:     "borgdir.media,index", Item1: "Equipment,equipment", Item2: "Meine Geräte,myequipment", Item3: "Logout,logout",
+		//Item1: "Equipment,equipment", Item2: "Meine Geräte,myequipment", Item3: "Logout,logout",
+		Item1:     "", Item2: "Meine Geräte,myequipment", Item3: "Logout,logout",
 		Name:      "", Type: "",
 		Basket:    false,
 		EmptySide: false,
-		Profil:    false}
+		Profil:    false, ProfilBild: ""}
 	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
 	fmt.Println(p2)
@@ -307,94 +296,50 @@ func equipment(w http.ResponseWriter, r *http.Request) {
 
 }
 
-/*
-func equipmentAlternative(w http.ResponseWriter, r *http.Request) {
-
-	session, _ := store.Get(r, "session")
-
-	// p := PageData{}
-	// c := model.Client{}
-
-	if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
-		fmt.Println("Not authenticated")
-		// p.Client = c
-		// c.Gesperrt = false //Gespert wird hier genutzt, um festzustellen, ob ein Benutzer angemeldet ist (für Links in navbar)
-
-	} else {
-		fmt.Println("authenticated")
-		// c, err := model.ReadClientByName(DB, session.Values["username"].(string))
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
-		// c.Gesperrt = true
-		// p.Client = c
-	}
-
-	// var equipment []model.Equipment
-	// var err error
-	// equipment, err = model.ReadAllEquipment(DB)
-	// if err != nil {
-	//	log.Fatal(err)
-	// }
-	//
-	// for k := 0; k < len(equipment); k++ {
-	//	if equipment[k].Amount > 0 {
-	//		equipment[k].Active = true
-	//	} else {
-	//		equipment[k].Active = false
-	//	}
-	// }
-	//
-	// var check bool = false
-	//
-	// for l := 0; l < len(equipment); l++ {
-	//	for m := 0; m < len(p.Category); m++ {
-	//		if strings.Compare(equipment[l].Category, p.Category[m]) == 0 {
-	//			check = true
-	//			break
-	//		}
-	//	}
-	//	if !check {
-	//		p.Category = append(p.Category, equipment[l].Category)
-	//	}
-	//	check = false
-	// }
-	//
-	// for i := 0; i < len(equipment); i++ {
-	//	p.StoreEquipment = append(p.StoreEquipment, equipment[i])
-	// }
-
-	// tmpl, _ := template.ParseFiles("template/equipment.html", "template/head.html", "template/foot.html")
-	// tmpl.Execute(w, p)
-}
-*/
-
 func Meine_Geräte(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("myequipment(w http.ResponseWriter, r *http.Request)")
 	fmt.Println()
 
-	p := menu{
-		Title:     "borgdir.media,index",
-		Item1:     "Equipment,equipment",
-		Item2:     "Meine Geräte,myequipment",
-		Item3:     "Logout,logout",
-		Basket:    true,
-		Name:      "",
-		Type:      "",
-		EmptySide: false,
-		Profil:    true}
+	// mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
-	// Alle Artikel von eingeloggtem Kunden -> var logged_id
-	ArtikelArr := Equipments.GetUserEquipment(1)
+	session, _ := config.CookieStore.Get(r, "session")
 
-	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/myequipment.html", "template/header.html", "template/static_imports.html"))
+	auth, ok := session.Values["logged"];
+	fmt.Println("auth :", auth)
+	fmt.Println("ok :", ok)
 
-	tmpl.ExecuteTemplate(w, "main", p)
-	tmpl.ExecuteTemplate(w, "static_imports", p)
-	tmpl.ExecuteTemplate(w, "header", p)
-	tmpl.ExecuteTemplate(w, "myequipment", MyEquipment{Items: ArtikelArr})
+	if !(ok) || !(auth.(bool)) {
 
+		http.Redirect(w, r, "/login", 301)
+
+	} else {
+
+		kunden_id_int := session.Values["KundenID"].(int)
+
+		client := Kunden.Get_Kunden_By_ID(kunden_id_int)
+
+		p := menu{
+			Title:     "borgdir.media,index",
+			Item1:     "Equipment,equipment", Item2: "Logout,logout", Item3: "",
+			Basket:    true,
+			Name:      client.Benutzername, Type: client.Typ,
+			EmptySide: false,
+			Profil:    true, ProfilBild: client.BildUrl}
+
+		// mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+
+		// Alle Artikel von eingeloggtem Kunden -> var logged_id
+		ArtikelArr := Equipments.GetUserEquipment(1)
+
+		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/myequipment.html", "template/header.html", "template/static_imports.html"))
+
+		tmpl.ExecuteTemplate(w, "main", p)
+		tmpl.ExecuteTemplate(w, "static_imports", p)
+		tmpl.ExecuteTemplate(w, "header", p)
+		tmpl.ExecuteTemplate(w, "myequipment", MyEquipment{Items: ArtikelArr})
+
+	}
 }
 
 func Warenkorb(w http.ResponseWriter, r *http.Request) {
@@ -404,14 +349,11 @@ func Warenkorb(w http.ResponseWriter, r *http.Request) {
 
 	p := menu{
 		Title:     "borgdir.media,index",
-		Item1:     "Equipment,equipment",
-		Item2:     "Meine Geräte,myequipment",
-		Item3:     "Logout,logout",
+		Item1:     "Equipment,equipment", Item2: "Meine Geräte,myequipment", Item3: "Logout,logout",
 		Basket:    true,
-		Name:      "",
-		Type:      "",
+		Name:      "", Type: "",
 		EmptySide: false,
-		Profil:    true}
+		Profil:    true, ProfilBild: ""}
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/equipment.html", "template/header.html", "template/static_imports.html"))
 
@@ -428,17 +370,6 @@ func Profil(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("/n/n---------------------------------------------------/n/n")
 
 	session, _ := config.CookieStore.Get(r, "session")
-
-	p := menu{
-		Title:     "borgdir.media,index",
-		Item1:     "Equipment,equipment",
-		Item2:     "Meine Geräte,myequipment",
-		Item3:     "Logout,logout",
-		Basket:    true,
-		Name:      "Hallo Welt",
-		Type:      "Benutzer",
-		EmptySide: false,
-		Profil:    true}
 
 	auth, ok := session.Values["logged"];
 	fmt.Println("auth :", auth)
@@ -457,6 +388,14 @@ func Profil(w http.ResponseWriter, r *http.Request) {
 		kunden_id_int := session.Values["KundenID"].(int)
 
 		client := Kunden.Get_Kunden_By_ID(kunden_id_int)
+
+		p := menu{
+			Title:     "borgdir.media,index",
+			Item1:     "Equipment,equipment", Item2: "Meine Geräte,myequipment", Item3: "Logout,logout",
+			Basket:    false,
+			Name:      client.Benutzername, Type: client.Typ,
+			EmptySide: false,
+			Profil:    true, ProfilBild: client.BildUrl}
 
 		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/profile.html", "template/header.html", "template/static_imports.html"))
 
@@ -479,14 +418,11 @@ func admin(w http.ResponseWriter, r *http.Request) {
 
 	p := menu{
 		Title:     "borgdir.media,index",
-		Item1:     "Equipment,equipment",
-		Item2:     "Kunden,clients",
-		Item3:     "Logout,logout",
+		Item1:     "Equipment,equipment", Item2: "Kunden,clients", Item3: "Logout,logout",
 		Basket:    false,
-		Name:      "Peter",
-		Type:      "Verleiher",
+		Name:      "Peter", Type: "Verleiher",
 		EmptySide: false,
-		Profil:    true}
+		Profil:    true, ProfilBild: ""}
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/admin.html", "template/header.html", "template/static_imports.html"))
 
@@ -505,14 +441,11 @@ func admin_Equipment(w http.ResponseWriter, r *http.Request) {
 	// ADMIN
 	p := menu{
 		Title:     "borgdir.media,index",
-		Item1:     "Equipment,equipment",
-		Item2:     "Kunden,clients",
-		Item3:     "Logout,logout",
+		Item1:     "Equipment,equipment", Item2: "Kunden,clients", Item3: "Logout,logout",
 		Basket:    false,
-		Name:      "",
-		Type:      "",
+		Name:      "", Type: "",
 		EmptySide: false,
-		Profil:    true}
+		Profil:    true, ProfilBild: ""}
 
 	// ArtikelArr := Equipments.Get_Alle_Equipment()
 
@@ -537,14 +470,11 @@ func admin_Equipment_Hinzufügen(w http.ResponseWriter, r *http.Request) {
 
 		p := menu{
 			Title:     "borgdir.media,index",
-			Item1:     "Equipment,equipment",
-			Item2:     "Kunden,clients",
-			Item3:     "Logout,logout",
+			Item1:     "Equipment,equipment", Item2: "Kunden,clients", Item3: "Logout,logout",
 			Basket:    false,
-			Name:      "",
-			Type:      "",
+			Name:      "", Type: "",
 			EmptySide: false,
-			Profil:    true}
+			Profil:    true, ProfilBild: ""}
 
 		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/admin_Equipment_Hinzufügen.html", "template/header.html", "template/static_imports.html"))
 
@@ -568,14 +498,11 @@ func admin_Equipment_Bearbeiten(w http.ResponseWriter, r *http.Request) {
 
 		p := menu{
 			Title:     "borgdir.media,index",
-			Item1:     "Equipment,equipment",
-			Item2:     "Kunden,clients",
-			Item3:     "Logout,logout",
+			Item1:     "Equipment,equipment", Item2: "Kunden,clients", Item3: "Logout,logout",
 			Basket:    false,
-			Name:      "",
-			Type:      "",
+			Name:      "", Type: "",
 			EmptySide: false,
-			Profil:    true}
+			Profil:    true, ProfilBild: ""}
 
 		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/admin_Equipment_Bearbeiten.html", "template/header.html", "template/static_imports.html"))
 
@@ -603,14 +530,11 @@ func admin_Kunden_Verwalten(w http.ResponseWriter, r *http.Request) {
 
 		p := menu{
 			Title:     "borgdir.media,index",
-			Item1:     "Equipment,equipment",
-			Item2:     "Kunden,clients",
-			Item3:     "Logout,logout",
+			Item1:     "Equipment,equipment", Item2: "Kunden,clients", Item3: "Logout,logout",
 			Basket:    false,
-			Name:      "",
-			Type:      "",
+			Name:      "", Type: "",
 			EmptySide: false,
-			Profil:    true}
+			Profil:    true, ProfilBild: ""}
 
 		ClientsArr := []Client{}
 
@@ -648,14 +572,11 @@ func admin_Kunden_Bearbeiten(w http.ResponseWriter, r *http.Request) {
 
 	p := menu{
 		Title:     "borgdir.media,index",
-		Item1:     "Equipment,equipment",
-		Item2:     "Kunden,clients",
-		Item3:     "Logout,logout",
+		Item1:     "Equipment,equipment", Item2: "Kunden,clients", Item3: "Logout,logout",
 		Basket:    false,
-		Name:      "",
-		Type:      "",
+		Name:      "", Type: "",
 		EmptySide: false,
-		Profil:    true}
+		Profil:    true, ProfilBild: ""}
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/adminEditClients.html", "template/header.html", "template/static_imports.html"))
 
@@ -729,8 +650,7 @@ func test(w http.ResponseWriter, r *http.Request) {
 
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
-func
-Handler() {
+func Handler() {
 
 	///////////////////////////////////////////////////////////////////////////////////////
 	http.HandleFunc("/", index)

@@ -2,13 +2,14 @@
 <div class="container-fluid">
     <div class="d-flex flex-row align-items-baseline">
         <div class="p-2 title">
-            <a class="title" href="/{{split .Title 1}}">{{split .Title 0}}</a>
+            {{/*<a class="title" href="/{{split .Title 1}}">{{split .Title 0}}</a>*/}}
+            <a class="title" href="/index">borgdir.media</a>
         </div>
         <div class="p-2 menu-item">
             <a href="/{{split .Item1 1}}">{{split .Item1 0}}</a>
         </div>
     {{if .Item2}}
-        <div class ="p-2 menu-item separator">
+        <div class="p-2 menu-item separator">
             |
         </div>
     {{end}}
@@ -16,29 +17,45 @@
             <a href="{{split .Item2 1}}">{{split .Item2 0}}</a>
         </div>
     {{if .Item3}}
-        <div class ="p-2 menu-item separator">
+        <div class="p-2 menu-item separator">
             |
-         </div>
+        </div>
     {{end}}
         <div class="p-2 menu-item">
             <a href="/{{split .Item3 1}}">{{split .Item3 0}}</a>
         </div>
     {{if .Basket}}
         <div class="p-2 align-self-baseline">
-            <i class="fas fa-shopping-cart fa-lg"></i>
+        {{/*<i class="fas fa-shopping-cart fa-lg"></i>*/}}
+            <img class="img-fluid" style="height: 30px; width: 30px;" src="/static/images/cart.png">
         </div>
     {{end}}
     {{if .EmptySide}}
         {{else}}
-    {{if .Profile}}
-        <div class="p-2 ml-auto align-self-center">
+    {{if .Profil}}
+        <div class="p-2 ml-auto align-self-center bold-medium-text">
             <div class="p-2">
-                <a href="/profile">{{.Name}}</a>
+                <div class="p-4 align-self-baseline">
+                {{/*<i class="fas fa-shopping-cart fa-3x"></i>*/}}
+                    <a href="/warenkorb"><img class="img-fluid" style="height: 50px; width: 50px;" src="/static/images/cart.png">
+                </div>
+            </div>
+        </div>
+        <div class="p-2 align-self-center bold-medium-text">
+            <div class="p-2">
+                <a href="/profil">{{.Name}}</a>
                 <p class="text-right user">{{.Type}}</p>
             </div>
         </div>
         <div class="p-2 ml-0 align-self-center user-icon">
-            <a href="/profile"><i class="fas fa-user-circle fa-lg"></i></a>
+            <a href="/profil">
+            {{if .ProfilBild}}
+                <img class="img-fluid" style="height: 100px; width: 100px;border-radius: 50%;" src="/static/media/kunden/{{.ProfilBild}}" alt="profilbild">
+            {{else}}
+                <i class="fas fa-user-circle fa-lg"></i>
+            {{end}}
+
+            </a>
         </div>
     {{else}}
         <div class="p-2 ml-auto align-self-center user-icon">
