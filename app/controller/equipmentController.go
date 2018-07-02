@@ -163,14 +163,14 @@ func (v Equipments) GetUserEquipment(kunde_id int) (equipments []model.MyEquipme
 	return
 }
 
-func (v Equipments) GetAdminEquipment(kunde_id int) (adminEquipments []model.AdminEquipments) {
+func (v Equipments) Get_Admin_Equipment_By_Kunden_ID(kunde_id int) (adminEquipments []model.Admin_Equipment) {
 	rows, err := config.Db.Query("select Equipment.Bezeichnung, Equipment.InventarNummer, Equipment.Lagerort Equipment.Hinweis, Kunde.Benutzername, Verleih.Rueckgabe from Equipment,Verleih,Kunde WHERE Equipment.EquipmentID = Verleih.EquipmentID AND Verleih.KundenID=$1", kunde_id)
 
 	if err != nil {
 		return
 	}
 	for rows.Next() {
-		adminEquipment := model.AdminEquipments{}
+		adminEquipment := model.Admin_Equipment{}
 
 		err = rows.Scan(&adminEquipment.Bezeichnung, &adminEquipment.InventarNummer, &adminEquipment.Lagerort, &adminEquipment.Hinweis, &adminEquipment.Benutzername, &adminEquipment.Rueckgabe)
 
@@ -179,6 +179,27 @@ func (v Equipments) GetAdminEquipment(kunde_id int) (adminEquipments []model.Adm
 		}
 
 		adminEquipments = append(adminEquipments, adminEquipment)
+	}
+	rows.Close()
+	return
+}
+
+func (v Equipments) Get_Alle_Equipment() (equipments []model.Equipment) {
+	rows, err := config.Db.Query("select * from Equipment where Typ = 'Benutzer'")
+
+	if err != nil {
+		return
+	}
+
+	for rows.Next() {
+		equipment := model.Equipment{}
+		err = rows.Scan(&equipment.EquipmentID, &equipment.Bezeichnung, &equipment.Kategorie, &equipment.InventarNummer, &equipment.Anzahl, &equipment.Hinweis, &equipment.BildURL,&equipment.VerleiherID,&equipment.Status)
+
+		if err != nil {
+			return
+		}
+
+		equipments = append(equipments, equipment)
 	}
 	rows.Close()
 	return

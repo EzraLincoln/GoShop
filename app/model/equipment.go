@@ -2,7 +2,6 @@ package model
 
 // Artikel data structure
 type Equipment struct {
-
 	EquipmentID    int
 	Bezeichnung    string
 	Kategorie      string
@@ -13,4 +12,15 @@ type Equipment struct {
 	BildURL        string
 	VerleiherID    int
 	Status         string
+}
+
+// /admin/equipment Seiten Struct
+type Admin_Equipment struct {
+	BildURL        string
+	Bezeichnung    string
+	InventarNummer int
+	Lagerort       string
+	Hinweis        string
+	Benutzername   string
+	Rueckgabe      string
 }

@@ -3,7 +3,6 @@ package controller
 import (
 	"../../config"
 	"../model"
-	"log"
 )
 
 // type Verleih model.Kunde
@@ -12,67 +11,70 @@ type Kunden struct{}
 
 func (v Kunden) Register_Kunden(user string, mail string, password string) (bool) {
 
-	if stmt, err := config.Db.Prepare("Insert into Kunde values (?,?,?,?,?,?,?)"); err != nil {
-		return true
+	stmt, err := config.Db.Prepare("Insert into Kunde(Benutzername,BildUrl,Typ,Status,Passwort,Email) values (?,?,?,?,?,?)");
+
+	// _,err := config.Db.Exec("Insert into Kunde(Benutzername,BildUrl,Typ,Status,Passwort,Email) values ('user','empty.jpg','Benutzer','aktiv','passsw','mails')");
+
+	if err != nil {
+		return false
 	} else {
 		defer stmt.Close()
-		if _, err = stmt.Exec(nil, user, "Benutzer", "aktiv", password, mail); err != nil {
-			return true
-		} else {
-			return false
-		}
+
+
+		_, err = stmt.Exec(user,"empty.jpg","Benutzer","aktiv", password, mail);
+
+		if  err != nil { return false} else { return true }
 	}
 }
 
-func (v Kunden) Get_Kunden_By_ID(kunde_id int) (profiles []model.Profile) {
+func (v Kunden) Get_Kunden_By_ID(kunde_id int) (kunden []model.Kunde) {
 	rows, err := config.Db.Query("select Kunde.KundeID,Kunde.Benutzername,Kunde.BildUrl,Kunde.Email,Kunde.Status from Kunde WHERE Kunde.KundeID = $1", kunde_id)
 
 	if err != nil {
 		return
 	}
 	for rows.Next() {
-		profile := model.Profile{}
+		kunde := model.Kunde{}
 
-		err = rows.Scan(&profile.KundenID, &profile.Benutzername, &profile.BildURL, &profile.Mail, &profile.Status)
+		err = rows.Scan(&kunde.KundeID, &kunde.Benutzername, &kunde.BildUrl, &kunde.Email, &kunde.Status)
 
 		if err != nil {
 			return
 		}
 
-		profiles = append(profiles, profile)
+		kunden = append(kunden, kunde)
 	}
 	rows.Close()
 	return
 }
-func (v Kunden) Get_Kunden_By_Name(name string) (profiles []model.Profile) {
+func (v Kunden) Get_Kunden_By_Name(name string) (kunden []model.Kunde) {
 	rows, err := config.Db.Query("select Kunde.KundeID,Kunde.Benutzername,Kunde.BildUrl,Kunde.Email,Kunde.Status from Kunde WHERE Kunde.Benutzername= $1", name)
 
 	if err != nil {
 		return
 	}
 	for rows.Next() {
-		profile := model.Profile{}
+		kunde := model.Kunde{}
 
-		err = rows.Scan(&profile.KundenID, &profile.Benutzername, &profile.BildURL, &profile.Mail, &profile.Status)
+		err = rows.Scan(&kunde.KundeID, &kunde.Benutzername, &kunde.BildUrl, &kunde.Email, &kunde.Status)
 
 		if err != nil {
 			return
 		}
 
-		profiles = append(profiles, profile)
+		kunden = append(kunden, kunde)
 	}
 	rows.Close()
 	return
 }
 
-func (v Kunden) Get_Kunden_By_Name_Mail(user string, mail string) (bool) {
+func (v Kunden) Test_For_Kunden_By_Name_Mail(user string, mail string) (bool) {
 
 	var id int
 
 	if config.Db.QueryRow("Select KundeID from Kunde WHERE Kunde.Benutzername= $1 AND Kunde.Email=$2", user, mail).Scan(&id) != nil {
 		return true
 	} else {
-		log.Fatalln("FEHLER", id)
 		return false
 	}
 }

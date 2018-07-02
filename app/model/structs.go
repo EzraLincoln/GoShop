@@ -10,16 +10,6 @@ type MyEquipment struct {
 	Rueckgabe      string
 }
 
-// /admin/equipment Seiten Struct
-type AdminEquipments struct {
-	BildURL        string
-	Bezeichnung    string
-	InventarNummer int
-	Lagerort       string
-	Hinweis        string
-	Benutzername   string
-	Rueckgabe      string
-}
 
 /* // /equipment Seiten Struct
 type Equipment struct {
@@ -28,12 +18,3 @@ type Equipment struct {
 	Anzahl      int
 	Hinweis     string
 }*/
-
-// /admin/edit-clients
-type Profile struct {
-	KundenID     int
-	Benutzername string
-	BildURL      string
-	Mail         string
-	Status       string
-}
