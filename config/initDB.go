@@ -11,10 +11,14 @@ import (
 var Db *sql.DB
 var err error
 
-func InitSQLiteDB() *sql.DB {
+//func InitSQLiteDB() *sql.DB {
+func InitSQLiteDB() {
 
-	Db, err := sql.Open("sqlite3", "./data/borgdirmedia.db")
+	Db, err = sql.Open("sqlite3", "./config/borgdirmedia.db")
 	test(err)
+}
+
+func ReturnDB() *sql.DB {
 	return Db
 }
 

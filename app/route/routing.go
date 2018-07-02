@@ -7,7 +7,10 @@ import (
 	"html/template"
 	"net/http"
 	"strings"
-	//	"log"
+
+	"github.com/gorilla/sessions"
+	"golang.org/x/crypto/bcrypt"
+	"encoding/base64"
 )
 
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
@@ -28,7 +31,6 @@ type menu struct {
 type Clients struct {
 	Items []client
 }
-
 type client struct {
 	BildUrl       string
 	Benutzername  string
@@ -37,27 +39,24 @@ type client struct {
 	Bezeichnungen []Bez
 	Status        string
 }
-
 type Bez struct {
 	Bezeichnung string
 }
-
 type MyEquipment struct {
 	Items []model.MyEquipment
 }
-
 type AdminEquipments struct {
 	Items []model.AdminEquipments
 }
-
 type Equipment struct {
 	Kategorien []string
 	Items      []model.Equipment
 }
-
 type Profiles struct {
 	Items []model.Profile
 }
+
+var store *sessions.CookieStore
 
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
@@ -168,9 +167,39 @@ func register(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 
 		Kunden.RegisterKunden(w, r)
-		//userName := r.FormValue("KundenID")
-		//fmt.Print(userName)
-		index(w, r)
+
+		fmt.Print(r.FormValue("user"))
+		fmt.Print(r.FormValue("mail"))
+		fmt.Print(r.FormValue("password"))
+		fmt.Print(r.FormValue("password2"))
+
+		if r.Method == "POST" {
+
+			user := r.FormValue("user")
+			mail := r.FormValue("mail")
+			password := r.FormValue("password")
+
+			password,_:= bcrypt.GenerateFromPassword([]byte(password), 4)
+			// b64HashedPwd := base64.StdEncoding.EncodeToString(encPassword)
+
+			_, err1 := model.ReadClientByName(DB, username)
+
+			//Prüfe ob Konte mit dem Benutzernamen bereits vorhanden ist
+			if err1 != nil && password == password_repeat {
+				data :=
+
+				var err error
+				err = model.InsertClient(DB, model.Client{Name: username, Email: email, Password: b64HashedPwd, Avatar: "NoPic.jpg"})
+				if err != nil {
+					fmt.Println("Konto konnte nicht angelegt werden.")
+					fmt.Println(err)
+				}
+				http.Redirect(w, r, "/login", 301)
+			} else {
+				fmt.Println("Benutzername bereits vergeben.")
+				http.Redirect(w, r, "/register", 301)
+			}
+		}
 	} else {
 
 		// REGISTER
@@ -201,16 +230,27 @@ func equipment(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("equipment(w http.ResponseWriter, r *http.Request)")
 	fmt.Println()
 
+	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+	/// FÜR GÄSTE OHNE EINGELOGGT
+	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 	p := menu{
-		Title:     "borgdir.media,index",
-		Item1:     "Equipment,equipment",
-		Item2:     "Meine Geräte,myequipment",
-		Item3:     "Logout,logout",
-		Basket:    true,
-		Name:      "",
-		Type:      "",
+		Title:     "borgdir.media,index", Item1: "Equipment,equipment", Item2: "Meine Geräte,myequipment", Item3: "Logout,logout",
+		Name:      "", Type: "",
+		Basket:    false,
 		EmptySide: false,
-		Profile:   true}
+		Profile:   false}
+	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+	/// FÜR USER
+	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+	p2 := menu{
+		Title:     "borgdir.media,index", Item1: "Equipment,equipment", Item2: "Meine Geräte,myequipment", Item3: "Logout,logout",
+		Name:      "", Type: "",
+		Basket:    false,
+		EmptySide: false,
+		Profile:   false}
+	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+
+	fmt.Println(p2)
 
 	EquipmentArr := Equipments.GetEquipment()
 
@@ -229,6 +269,66 @@ func equipment(w http.ResponseWriter, r *http.Request) {
 	// tmpl.ExecuteTemplate(w, "equipment", EquipmentArr)
 	// tmpl.ExecuteTemplate(w, "equipment", map[string]interface{}{"mymap": map[string]string{"key": "value"}})
 
+}
+
+func equipmentAlternative(w http.ResponseWriter, r *http.Request) {
+
+	session, _ := store.Get(r, "session")
+
+	// p := PageData{}
+	// c := model.Client{}
+
+	if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
+		fmt.Println("Not authenticated")
+		// p.Client = c
+		// c.Gesperrt = false //Gespert wird hier genutzt, um festzustellen, ob ein Benutzer angemeldet ist (für Links in navbar)
+
+	} else {
+		fmt.Println("authenticated")
+		// c, err := model.ReadClientByName(DB, session.Values["username"].(string))
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
+		// c.Gesperrt = true
+		// p.Client = c
+	}
+
+	// var equipment []model.Equipment
+	// var err error
+	// equipment, err = model.ReadAllEquipment(DB)
+	// if err != nil {
+	//	log.Fatal(err)
+	// }
+	//
+	// for k := 0; k < len(equipment); k++ {
+	//	if equipment[k].Amount > 0 {
+	//		equipment[k].Active = true
+	//	} else {
+	//		equipment[k].Active = false
+	//	}
+	// }
+	//
+	// var check bool = false
+	//
+	// for l := 0; l < len(equipment); l++ {
+	//	for m := 0; m < len(p.Category); m++ {
+	//		if strings.Compare(equipment[l].Category, p.Category[m]) == 0 {
+	//			check = true
+	//			break
+	//		}
+	//	}
+	//	if !check {
+	//		p.Category = append(p.Category, equipment[l].Category)
+	//	}
+	//	check = false
+	// }
+	//
+	// for i := 0; i < len(equipment); i++ {
+	//	p.StoreEquipment = append(p.StoreEquipment, equipment[i])
+	// }
+
+	// tmpl, _ := template.ParseFiles("template/equipment.html", "template/head.html", "template/foot.html")
+	// tmpl.Execute(w, p)
 }
 
 func myequipment(w http.ResponseWriter, r *http.Request) {
@@ -258,7 +358,6 @@ func myequipment(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "myequipment", MyEquipment{Items: ArtikelArr})
 
 }
-
 func cart(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("cart(w http.ResponseWriter, r *http.Request)")
@@ -283,7 +382,6 @@ func cart(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "cart", p)
 
 }
-
 func profile(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("profile(w http.ResponseWriter, r *http.Request)")
@@ -338,7 +436,6 @@ func admin(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "admin", p)
 
 }
-
 func adminEquipment(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("adminEquipment(w http.ResponseWriter, r *http.Request)")
@@ -366,7 +463,6 @@ func adminEquipment(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "adminEquipment", AdminEquipments{Items: ArtikelArr})
 
 }
-
 func adminAddEquipment(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("adminAddEquipment(w http.ResponseWriter, r *http.Request)")
@@ -388,7 +484,7 @@ func adminAddEquipment(w http.ResponseWriter, r *http.Request) {
 			EmptySide: false,
 			Profile:   true}
 
-			tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/adminAddEquipment.html", "template/header.html", "template/static_imports.html"))
+		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/adminAddEquipment.html", "template/header.html", "template/static_imports.html"))
 
 		tmpl.ExecuteTemplate(w, "main", p)
 		tmpl.ExecuteTemplate(w, "static_imports", p)
@@ -397,7 +493,6 @@ func adminAddEquipment(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
-
 func adminEditEquipment(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("adminEditEquipment(w http.ResponseWriter, r *http.Request)")
@@ -428,7 +523,6 @@ func adminEditEquipment(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
-
 func adminProfiles(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("adminClients(w http.ResponseWriter, r *http.Request)")
@@ -488,7 +582,6 @@ func adminProfiles(w http.ResponseWriter, r *http.Request) {
 
 	}
 }
-
 func adminEditClient(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("adminEditProfile(w http.ResponseWriter, r *http.Request)")

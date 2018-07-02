@@ -67,7 +67,7 @@ func (v Equipments) GetEquipment() (Equipments []model.Equipment) {
 	}
 	*/
 
-	rows, err := config.Db.Query("SELECT Bezeichnung FROM Equipment")
+	rows, err := config.Db.Query("SELECT * FROM Equipment")
 
 	if err != nil {
 		fmt.Println("Error (1) in Controller - GetEquipment()")
@@ -77,10 +77,35 @@ func (v Equipments) GetEquipment() (Equipments []model.Equipment) {
 
 	for rows.Next() {
 
-		// err = rows.Scan(&Equipment.EquipmentID,&Equipment.Bezeichnung,&Equipment.Kategorie,&Equipment.InventarNummer,&Equipment.Lagerort,&Equipment.Anzahl,&Equipment.Hinweis,&Equipment.BildURL)
-		err = rows.Scan(&Equipment.Bezeichnung)
+		err = rows.Scan(
+			&Equipment.EquipmentID,
+			&Equipment.Bezeichnung,
+			&Equipment.Kategorie,
+			&Equipment.InventarNummer,
+			&Equipment.Lagerort,
+			&Equipment.Anzahl,
+			&Equipment.Hinweis,
+			&Equipment.BildURL,
+			&Equipment.VerleiherID,
+			&Equipment.Status,
+		)
 
-		fmt.Println(Equipment)
+		// err = rows.Scan(&Equipment.Bezeichnung)
+
+		fmt.Println()
+
+		fmt.Println(Equipment.EquipmentID)
+		fmt.Println(Equipment.Bezeichnung)
+		fmt.Println(Equipment.Kategorie)
+		fmt.Println(Equipment.InventarNummer)
+		fmt.Println(Equipment.Lagerort)
+		fmt.Println(Equipment.Anzahl)
+		fmt.Println(Equipment.Hinweis)
+		fmt.Println(Equipment.BildURL)
+		fmt.Println(Equipment.VerleiherID)
+		fmt.Println(Equipment.Status)
+
+		fmt.Println()
 
 		Equipments = append(Equipments, Equipment)
 

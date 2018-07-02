@@ -49,8 +49,29 @@ func (v Kunden) GetAllUser() (kunden []model.Kunde) {
 	return
 }
 
-func (v Kunden) GetProfile(kunde_id int) (profiles []model.Profile) {
+func (v Kunden) GetKundenByID(kunde_id int) (profiles []model.Profile) {
 	rows, err := config.Db.Query("select Kunde.KundeID,Kunde.Benutzername,Kunde.BildUrl,Kunde.Email,Kunde.Status from Kunde WHERE Kunde.KundeID = $1", kunde_id)
+
+	if err != nil {
+		return
+	}
+	for rows.Next() {
+		profile := model.Profile{}
+
+		err = rows.Scan(&profile.KundenID, &profile.Benutzername, &profile.BildURL, &profile.Mail, &profile.Status)
+
+		if err != nil {
+			return
+		}
+
+		profiles = append(profiles, profile)
+	}
+	rows.Close()
+	return
+}
+
+func (v Kunden) GetKundenByName(name string) (profiles []model.Profile) {
+	rows, err := config.Db.Query("select Kunde.KundeID,Kunde.Benutzername,Kunde.BildUrl,Kunde.Email,Kunde.Status from Kunde WHERE Kunde.Benutzername= $1", name)
 
 	if err != nil {
 		return

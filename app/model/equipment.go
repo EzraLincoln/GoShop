@@ -2,7 +2,8 @@ package model
 
 // Artikel data structure
 type Equipment struct {
-	ArtikelID      int
+
+	EquipmentID    int
 	Bezeichnung    string
 	Kategorie      string
 	InventarNummer int
@@ -10,4 +11,6 @@ type Equipment struct {
 	Anzahl         int
 	Hinweis        string
 	BildURL        string
+	VerleiherID    int
+	Status         string
 }

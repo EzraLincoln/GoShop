@@ -8,7 +8,7 @@ import (
 
 func main() {
 
-	config.Db = config.InitSQLiteDB()
+	config.InitSQLiteDB()
 
 	route.Handler()
 
