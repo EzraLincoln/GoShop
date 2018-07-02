@@ -10,35 +10,42 @@ import (
 
 	"github.com/gorilla/sessions"
 	"golang.org/x/crypto/bcrypt"
-	"encoding/base64"
-	"log"
 )
 
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
 type menu struct {
-	Title     string
-	Item1     string
-	Item2     string
-	Item3     string
-	Basket    bool
-	Name      string
-	Type      string
-	Profil    bool
+	Title  string
+	Item1  string
+	Item2  string
+	Item3  string
+	Basket bool
+	Name   string
+	Type   string
+	// Profil    bool
 	EmptySide bool
-	Profil   bool
+	Profil    bool
 }
 
-type KundenCollection struct {
-	Items []Kunde
+type Client_Collection struct {
+	Items []Client
 }
-type Kunde struct {
+type Client struct {
 	BildUrl       string
 	Benutzername  string
 	KundenID      int
 	Typ           string
 	Bezeichnungen []Bez
 	Status        string
+}
+
+// /admin/edit-clients
+type Profile struct {
+	KundenID     int
+	Benutzername string
+	BildURL      string
+	Mail         string
+	Status       string
 }
 
 type Bez struct {
@@ -48,15 +55,13 @@ type Bez struct {
 type MyEquipment struct {
 	Items []model.MyEquipment
 }
-type AdminEquipments struct {
-	Items []model.AdminEquipments
+type admin_Equipment_Collection struct {
+	Items []model.Admin_Equipment
 }
+
 type EquipmentCollection struct {
 	Kategorien []string
 	Items      []model.Equipment
-}
-type Profiles struct {
-	Items []model.Profil
 }
 
 var store *sessions.CookieStore
@@ -98,7 +103,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 		Name:      "",
 		Type:      "",
 		EmptySide: false,
-		Profil:   false}
+		Profil:    false}
 
 	// fmt.Println(p)
 
@@ -151,7 +156,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		Name:      "",
 		Type:      "",
 		EmptySide: true,
-		Profil:   false}
+		Profil:    false}
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/header.html", "template/static_imports.html", "template/login.html"))
 
@@ -182,10 +187,10 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 			hash, _ := bcrypt.GenerateFromPassword([]byte(password), 4)
 
-			if Kunden.Get_Kunden_By_Name_Mail(user, mail) {
+			if Kunden.Test_For_Kunden_By_Name_Mail(user, mail) {
 
 				if Kunden.Register_Kunden(user, mail, string(hash)) {
-					log.Fatalln("FEHLER")
+					fmt.Println("FEHLER beim Hinzufügen des Kunden")
 				}
 
 				// http.Redirect(w, r, "/login", 301)
@@ -194,6 +199,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 			} else {
 
 				// http.Redirect(w, r, "/register", 301)
+				fmt.Println("FEHLER Kunde bereits in Datenbank")
 				register(w, r)
 			}
 		}
@@ -209,7 +215,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 			Name:      "",
 			Type:      "",
 			EmptySide: true,
-			Profil:   false}
+			Profil:    false}
 
 		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/register.html", "template/static_imports.html", "template/header.html"))
 
@@ -235,7 +241,7 @@ func equipment(w http.ResponseWriter, r *http.Request) {
 		Name:      "", Type: "",
 		Basket:    false,
 		EmptySide: false,
-		Profil:   false}
+		Profil:    false}
 	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 	/// FÜR USER
 	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
@@ -244,7 +250,7 @@ func equipment(w http.ResponseWriter, r *http.Request) {
 		Name:      "", Type: "",
 		Basket:    false,
 		EmptySide: false,
-		Profil:   false}
+		Profil:    false}
 	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
 	fmt.Println(p2)
@@ -258,7 +264,7 @@ func equipment(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "main", p)
 	tmpl.ExecuteTemplate(w, "static_imports", p)
 	tmpl.ExecuteTemplate(w, "header", p)
-	tmpl.ExecuteTemplate(w, "equipment", Equipment{Kategorien: []string{"Kameras", "Mikrofone", "Monitore", "Beleuchtung"}, Items: EquipmentArr})
+	tmpl.ExecuteTemplate(w, "equipment", EquipmentCollection{Kategorien: []string{"Kameras", "Mikrofone", "Monitore", "Beleuchtung"}, Items: EquipmentArr})
 
 	// Info := make(map[string]string)
 	// Info["test"] = "About Page"
@@ -328,7 +334,7 @@ func equipmentAlternative(w http.ResponseWriter, r *http.Request) {
 	// tmpl.Execute(w, p)
 }
 
-func myequipment(w http.ResponseWriter, r *http.Request) {
+func user_Meine_Geräte(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("myequipment(w http.ResponseWriter, r *http.Request)")
 	fmt.Println()
@@ -342,7 +348,7 @@ func myequipment(w http.ResponseWriter, r *http.Request) {
 		Name:      "",
 		Type:      "",
 		EmptySide: false,
-		Profil:   true}
+		Profil:    true}
 
 	// Alle Artikel von eingeloggtem Kunden -> var logged_id
 	ArtikelArr := Equipments.GetUserEquipment(1)
@@ -355,6 +361,7 @@ func myequipment(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "myequipment", MyEquipment{Items: ArtikelArr})
 
 }
+
 func cart(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("cart(w http.ResponseWriter, r *http.Request)")
@@ -369,7 +376,7 @@ func cart(w http.ResponseWriter, r *http.Request) {
 		Name:      "",
 		Type:      "",
 		EmptySide: false,
-		Profil:   true}
+		Profil:    true}
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/equipment.html", "template/header.html", "template/static_imports.html"))
 
@@ -380,7 +387,7 @@ func cart(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func profil(w http.ResponseWriter, r *http.Request) {
+func user_profil(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("profil(w http.ResponseWriter, r *http.Request)")
 	fmt.Println()
@@ -394,9 +401,9 @@ func profil(w http.ResponseWriter, r *http.Request) {
 		Name:      "",
 		Type:      "",
 		EmptySide: false,
-		Profil:   true}
+		Profil:    true}
 
-	ProfilesArr := Kunden.Get_Kunden_By_ID(1)
+	request := Kunden.Get_Kunden_By_ID(1)
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/profile.html", "template/header.html", "template/static_imports.html"))
 
@@ -406,8 +413,7 @@ func profil(w http.ResponseWriter, r *http.Request) {
 
 	//tmpl.ExecuteTemplate(w, "profile", Profiles{Items: ProfilesArr})
 
-	tmpl.ExecuteTemplate(w, "profile", {Kategorien: []string{"Kameras", "Mikrofone", "Monitore", "Beleuchtung"}, Items: EquipmentArr})
-
+	tmpl.ExecuteTemplate(w, "profile", request)
 }
 
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
@@ -426,7 +432,7 @@ func admin(w http.ResponseWriter, r *http.Request) {
 		Name:      "Peter",
 		Type:      "Verleiher",
 		EmptySide: false,
-		Profile:   true}
+		Profil:    true}
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/admin.html", "template/header.html", "template/static_imports.html"))
 
@@ -436,9 +442,10 @@ func admin(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "admin", p)
 
 }
-func adminEquipment(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println("adminEquipment(w http.ResponseWriter, r *http.Request)")
+func admin_Equipment(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("admin_Equipment(w http.ResponseWriter, r *http.Request)")
 	fmt.Println()
 
 	// ADMIN
@@ -451,21 +458,22 @@ func adminEquipment(w http.ResponseWriter, r *http.Request) {
 		Name:      "",
 		Type:      "",
 		EmptySide: false,
-		Profile:   true}
+		Profil:    true}
 
-	ArtikelArr := Equipments.GetAdminEquipment(1)
+	// ArtikelArr := Equipments.Get_Alle_Equipment()
 
-	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/adminEquipment.html", "template/header.html", "template/static_imports.html"))
+	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/admin_Equipment.html", "template/header.html", "template/static_imports.html"))
 
 	tmpl.ExecuteTemplate(w, "main", p)
 	tmpl.ExecuteTemplate(w, "static_imports", p)
 	tmpl.ExecuteTemplate(w, "header", p)
-	tmpl.ExecuteTemplate(w, "adminEquipment", AdminEquipments{Items: ArtikelArr})
+	// tmpl.ExecuteTemplate(w, "admin_Equipment", admin_Equipment_Collection{Items: ArtikelArr})
 
 }
-func adminAddEquipment(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println("adminAddEquipment(w http.ResponseWriter, r *http.Request)")
+func admin_Equipment_Hinzufügen(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("admin_Equipment_Hinzufügen(w http.ResponseWriter, r *http.Request)")
 	fmt.Println()
 
 	if r.Method == "POST" {
@@ -482,20 +490,21 @@ func adminAddEquipment(w http.ResponseWriter, r *http.Request) {
 			Name:      "",
 			Type:      "",
 			EmptySide: false,
-			Profile:   true}
+			Profil:    true}
 
-		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/adminAddEquipment.html", "template/header.html", "template/static_imports.html"))
+		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/admin_Equipment_Hinzufügen.html", "template/header.html", "template/static_imports.html"))
 
 		tmpl.ExecuteTemplate(w, "main", p)
 		tmpl.ExecuteTemplate(w, "static_imports", p)
 		tmpl.ExecuteTemplate(w, "header", p)
-		tmpl.ExecuteTemplate(w, "adminAddEquipment", p)
+		tmpl.ExecuteTemplate(w, "admin_Equipment_Hinzufügen", p)
 	}
 
 }
-func adminEditEquipment(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println("adminEditEquipment(w http.ResponseWriter, r *http.Request)")
+func admin_Equipment_Bearbeiten(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("admin_Equipment_Bearbeiten(w http.ResponseWriter, r *http.Request)")
 	fmt.Println()
 
 	if r.Method == "POST" {
@@ -512,18 +521,19 @@ func adminEditEquipment(w http.ResponseWriter, r *http.Request) {
 			Name:      "",
 			Type:      "",
 			EmptySide: false,
-			Profile:   true}
+			Profil:    true}
 
-		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/adminEditEquipment.html", "template/header.html", "template/static_imports.html"))
+		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/admin_Equipment_Bearbeiten.html", "template/header.html", "template/static_imports.html"))
 
 		tmpl.ExecuteTemplate(w, "main", p)
 		tmpl.ExecuteTemplate(w, "static_imports", p)
 		tmpl.ExecuteTemplate(w, "header", p)
-		tmpl.ExecuteTemplate(w, "adminEditEquipment", p)
+		tmpl.ExecuteTemplate(w, "admin_Equipment_Bearbeiten", p)
 	}
 
 }
-func adminProfiles(w http.ResponseWriter, r *http.Request) {
+
+func admin_Kunden_Verwalten(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("adminClients(w http.ResponseWriter, r *http.Request)")
 	fmt.Println()
@@ -546,31 +556,25 @@ func adminProfiles(w http.ResponseWriter, r *http.Request) {
 			Name:      "",
 			Type:      "",
 			EmptySide: false,
-			Profile:   true}
+			Profil:    true}
+
+		ClientsArr := []Client{}
 
 		//Alle Kunden auslesen
-		KundenArr := Kunden.GetAllUser()
+		KundenArr := Kunden.Get_Alle_Kunden()
 
-		var ClientsArr = []client{}
-
-		// for index := range ClientsArr {
 		for _, element := range KundenArr {
-			// ClientsArr = append(ClientsArr,client{controller.getKundenById(controller.getVerleihById(index).kundeID)).bildUrl,"asdasd","asdasd","asdasd","asdasd","asdasdad",},)
 
-			artikelFromUser := Equipments.GetAllBezeichnungenFromKundenEquipment(element.KundeID)
+			artikelFromUser := Equipments.GetUserEquipment(element.KundeID)
 
 			var EquipmentString = []Bez{}
 
 			for _, element := range artikelFromUser {
 
-				EquipmentString = append(EquipmentString, Bez{element})
+				EquipmentString = append(EquipmentString, Bez{element.Bezeichnung})
 			}
 
-			ClientsArr = append(ClientsArr, client{element.BildUrl, element.Benutzername, element.KundeID, element.Typ, EquipmentString, element.Status})
-		}
-
-		data := Clients{
-			Items: ClientsArr,
+			ClientsArr = append(ClientsArr, Client{element.BildUrl, element.Benutzername, element.KundeID, element.Typ, EquipmentString, element.Status})
 		}
 
 		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/clients.html", "template/header.html", "template/static_imports.html"))
@@ -578,11 +582,13 @@ func adminProfiles(w http.ResponseWriter, r *http.Request) {
 		tmpl.ExecuteTemplate(w, "main", nil)
 		tmpl.ExecuteTemplate(w, "static_imports", p)
 		tmpl.ExecuteTemplate(w, "header", p)
-		tmpl.ExecuteTemplate(w, "clients", data)
+
+		tmpl.ExecuteTemplate(w, "clients", Client_Collection{Items: ClientsArr,})
 
 	}
 }
-func adminEditClient(w http.ResponseWriter, r *http.Request) {
+
+func admin_Kunden_Bearbeiten(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("adminEditProfile(w http.ResponseWriter, r *http.Request)")
 	fmt.Println()
@@ -596,9 +602,7 @@ func adminEditClient(w http.ResponseWriter, r *http.Request) {
 		Name:      "",
 		Type:      "",
 		EmptySide: false,
-		Profile:   true}
-
-	ClientArr := Kunden.GetProfile(1)
+		Profil:    true}
 
 	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/adminEditProfile.html", "template/header.html", "template/static_imports.html"))
 
@@ -606,7 +610,7 @@ func adminEditClient(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "static_imports", p)
 	tmpl.ExecuteTemplate(w, "header", p)
 
-	tmpl.ExecuteTemplate(w, "adminEditProfile", Profiles{Items: ClientArr})
+	tmpl.ExecuteTemplate(w, "adminEditProfile", Kunden.Get_Kunden_By_ID(1))
 
 }
 
@@ -662,6 +666,7 @@ func test(w http.ResponseWriter, r *http.Request) {
 	// Info["test"] = "About Page"
 
 	// tmpl.ExecuteTemplate(w, "equipment", EquipmentArr)
+
 	// tmpl.ExecuteTemplate(w, "equipment", map[string]interface{}{"mymap": map[string]string{"key": "value"}})
 
 	// t := template.Must(template.New("html_code").Parse(html_code))
@@ -672,24 +677,24 @@ func test(w http.ResponseWriter, r *http.Request) {
 
 func Handler() {
 
-	fmt.Println("Aufruf Handler()")
-
-	fmt.Println()
-
+	///////////////////////////////////////////////////////////////////////////////////////
 	http.HandleFunc("/", index)
 	http.HandleFunc("/admin", admin)
-	http.HandleFunc("/admin/equipment", adminEquipment)
-	http.HandleFunc("/admin/add", adminAddEquipment)
-	http.HandleFunc("/admin/clients", adminProfiles)
-	http.HandleFunc("/admin/edit-client", adminEditClient)
-	http.HandleFunc("/admin/edit-equipment", adminEditEquipment)
+	http.HandleFunc("/admin/equipment", admin_Equipment)
+	http.HandleFunc("/admin/add", admin_Equipment_Hinzufügen)
+	http.HandleFunc("/admin/clients", admin_Kunden_Verwalten)
+	http.HandleFunc("/admin/edit-client", admin_Kunden_Bearbeiten)
+	http.HandleFunc("/admin/edit-equipment", admin_Equipment_Bearbeiten)
+	///////////////////////////////////////////////////////////////////////////////////////
 	http.HandleFunc("/login", login)
-	http.HandleFunc("/equipment", equipment)
-	http.HandleFunc("/myequipment", myequipment)
-	http.HandleFunc("/profil", profil)
 	http.HandleFunc("/register", register)
+	///////////////////////////////////////////////////////////////////////////////////////
 	http.HandleFunc("/cart", cart)
-
+	http.HandleFunc("/equipment", equipment)
+	///////////////////////////////////////////////////////////////////////////////////////
+	http.HandleFunc("/myequipment", user_Meine_Geräte)
+	http.HandleFunc("/profil", user_profil)
+	///////////////////////////////////////////////////////////////////////////////////////
 	http.HandleFunc("/test", test)
 
 	return
