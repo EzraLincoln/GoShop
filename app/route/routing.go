@@ -147,6 +147,34 @@ func login(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("login(w http.ResponseWriter, r *http.Request)")
 	fmt.Println()
 
+	if r.Method == "POST" {
+
+		user := r.FormValue("user")
+		password := r.FormValue("password")
+
+		hash, _ := bcrypt.GenerateFromPassword([]byte(password), 4)
+
+		fmt.Println("User : ", user, " Password : ", password)
+
+		result := Kunden.Get_Kunden_By_Name(user)
+
+		if result == "" {
+			fmt.Println("Kunde in der DB nicht gefunden.")
+			http.Redirect(w, r, "/login", 301)
+		} else {
+
+			fmt.Println(result)
+			passwordDB := []byte(result)
+
+			fmt.Println(passwordDB)
+			fmt.Println(hash)
+
+			bcrypt.CompareHashAndPassword(passwordDB, hash)
+
+			// http.Redirect(w, r, "/register", 301)
+		}
+	}
+
 	p := menu{
 		Title:     "borgdir.media,index",
 		Item1:     "Equipment,equipment",
@@ -174,56 +202,50 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 
-		fmt.Print(r.FormValue("user"))
-		fmt.Print(r.FormValue("mail"))
-		fmt.Print(r.FormValue("password"))
-		fmt.Print(r.FormValue("password2"))
+		user := r.FormValue("user")
+		mail := r.FormValue("mail")
+		password := r.FormValue("password")
 
-		if r.Method == "POST" {
+		hash, _ := bcrypt.GenerateFromPassword([]byte(password), 4)
 
-			user := r.FormValue("user")
-			mail := r.FormValue("mail")
-			password := r.FormValue("password")
+		fmt.Println("User : ", user)
+		fmt.Println("Mail : ", mail)
+		fmt.Println("Password : ", hash)
 
-			hash, _ := bcrypt.GenerateFromPassword([]byte(password), 4)
+		if Kunden.Test_For_Kunden_By_Name_Mail(user, mail) {
 
-			if Kunden.Test_For_Kunden_By_Name_Mail(user, mail) {
-
-				if Kunden.Register_Kunden(user, mail, string(hash)) {
-					fmt.Println("FEHLER beim Hinzufügen des Kunden")
-				}
-
-				// http.Redirect(w, r, "/login", 301)
-				index(w, r)
-
+			if Kunden.Register_Kunden(user, mail, string(hash)) {
+				fmt.Println("FEHLER :: Hinzufügen des Kunden")
 			} else {
-
-				// http.Redirect(w, r, "/register", 301)
-				fmt.Println("FEHLER Kunde bereits in Datenbank")
-				register(w, r)
+				fmt.Println("ERFOLG :: Kunde wurde angelegt !")
+				http.Redirect(w, r, "/login", 301)
 			}
+
+		} else {
+
+			http.Redirect(w, r, "/register", 301)
+			fmt.Println("FEHLER :: Kunde bereits in Datenbank")
 		}
-	} else {
-
-		// REGISTER
-		p := menu{
-			Title:     "borgdir.media,index",
-			Item1:     "Equipment,equipment",
-			Item2:     "Login,login",
-			Item3:     "",
-			Basket:    false,
-			Name:      "",
-			Type:      "",
-			EmptySide: true,
-			Profil:    false}
-
-		tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/register.html", "template/static_imports.html", "template/header.html"))
-
-		tmpl.ExecuteTemplate(w, "main", p)
-		tmpl.ExecuteTemplate(w, "static_imports", p)
-		tmpl.ExecuteTemplate(w, "header", p)
-		tmpl.ExecuteTemplate(w, "register", p)
 	}
+
+	// REGISTER
+	p := menu{
+		Title:     "borgdir.media,index",
+		Item1:     "Equipment,equipment",
+		Item2:     "Login,login",
+		Item3:     "",
+		Basket:    false,
+		Name:      "",
+		Type:      "",
+		EmptySide: true,
+		Profil:    false}
+
+	tmpl := template.Must(template.New("main").Funcs(funcMap).ParseFiles("template/register.html", "template/static_imports.html", "template/header.html"))
+
+	tmpl.ExecuteTemplate(w, "main", p)
+	tmpl.ExecuteTemplate(w, "static_imports", p)
+	tmpl.ExecuteTemplate(w, "header", p)
+	tmpl.ExecuteTemplate(w, "register", p)
 }
 
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm

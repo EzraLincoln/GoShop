@@ -1,9 +1,9 @@
 package model
-
 import (
 	"../../config"
 	_ "github.com/mattn/go-sqlite3"
 )
+
 
 type Kunden map[int]*Kunde
 

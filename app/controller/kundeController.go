@@ -3,6 +3,7 @@ package controller
 import (
 	"../../config"
 	"../model"
+	"fmt"
 )
 
 // type Verleih model.Kunde
@@ -11,19 +12,16 @@ type Kunden struct{}
 
 func (v Kunden) Register_Kunden(user string, mail string, password string) (bool) {
 
-	stmt, err := config.Db.Prepare("Insert into Kunde(Benutzername,BildUrl,Typ,Status,Passwort,Email) values (?,?,?,?,?,?)");
+	v1, err := config.Db.Prepare("Insert into Kunde(Benutzername,BildUrl,Typ,Status,Passwort,Email) values (?,?,?,?,?,?)");
+	defer v1.Close()
 
-	// _,err := config.Db.Exec("Insert into Kunde(Benutzername,BildUrl,Typ,Status,Passwort,Email) values ('user','empty.jpg','Benutzer','aktiv','passsw','mails')");
+	v2, err := v1.Exec(user, "empty.jpg", "Benutzer", "aktiv", password, mail);
+	fmt.Println(v2)
 
 	if err != nil {
-		return false
+		return true
 	} else {
-		defer stmt.Close()
-
-
-		_, err = stmt.Exec(user,"empty.jpg","Benutzer","aktiv", password, mail);
-
-		if  err != nil { return false} else { return true }
+		return false
 	}
 }
 
@@ -47,25 +45,26 @@ func (v Kunden) Get_Kunden_By_ID(kunde_id int) (kunden []model.Kunde) {
 	rows.Close()
 	return
 }
-func (v Kunden) Get_Kunden_By_Name(name string) (kunden []model.Kunde) {
-	rows, err := config.Db.Query("select Kunde.KundeID,Kunde.Benutzername,Kunde.BildUrl,Kunde.Email,Kunde.Status from Kunde WHERE Kunde.Benutzername= $1", name)
 
-	if err != nil {
-		return
+func (v Kunden) Get_Kunden_By_Name(name string) (password string) {
+
+	fmt.Println("Suche nach ", name)
+
+	request,_ := config.Db.Query("SELECT Passwort from Kunde WHERE Benutzername = $1", name)
+
+	fmt.Println("Password : " ,password)
+	err := request.Scan(password)
+
+	if (err != nil) {
+		return ""
 	}
-	for rows.Next() {
-		kunde := model.Kunde{}
 
-		err = rows.Scan(&kunde.KundeID, &kunde.Benutzername, &kunde.BildUrl, &kunde.Email, &kunde.Status)
+	request.Close()
 
-		if err != nil {
-			return
-		}
+	fmt.Println("Password : " ,password)
 
-		kunden = append(kunden, kunde)
-	}
-	rows.Close()
-	return
+	return password
+
 }
 
 func (v Kunden) Test_For_Kunden_By_Name_Mail(user string, mail string) (bool) {

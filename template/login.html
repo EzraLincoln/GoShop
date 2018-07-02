@@ -1,30 +1,101 @@
 {{define "login"}}
-        <div class="container mid-content">
-            <div class="row text-center">
-                <div class="col big-bold-text">
-                    Login
-                </div>
-            </div>
-            <div class="row justify-content-center mt-2">
-                <div class="col-md-6"   >
-                    <div class="form-group text-left">
-                        <label for="user">Benutzername:</label>
-                        <input type="text" class="form-control" id="user">
-                    </div>
-                </div>
-            </div>
-            <div class="row justify-content-center">
-                <div class="col-md-6"   >
-                    <div class="form-group text-left">
-                        <label for="psw">Passwort:</label>
-                        <input type="password" class="form-control" id="psw">
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col text-center py-4">
-                    <form action="#"><input type="submit" class="btn button-startpage" value="Anmelden" /></form>
-                </div>
+<div class="container mid-content">
+    <div class="row text-center">
+        <div class="col big-bold-text">
+            Login
+        </div>
+    </div>
+    <div class="row justify-content-center mt-2">
+        <div class="col-md-6">
+            <div class="form-group text-left">
+                <label for="user">Benutzername:</label>
+                <input type="text" class="form-control" id="user" required>
             </div>
         </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="form-group text-left">
+                <label for="psw">Passwort:</label>
+                <input type="password" class="form-control" id="password" required>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-center py-4">
+            <button type="button" onclick="checkSubmit()" class="btn big-bold-text button-startpage" id="registerSubmit" style="border: 1px solid #888;border-radius: 25px;">Anmelden</button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    jQuery(document).ready(function ()
+    {
+        jQuery(document).ready(function ()
+        {
+            $("#user").val("")
+            $("#password").val("")
+
+            if (($("#user").val().length + $("#password").val().length) > 0)
+            {
+                location.reload();
+            }
+
+        });
+    });
+
+    $('input').on('focus', function ()
+    {
+        this.value = '';
+        $(this).css('border', '4');
+    });
+
+    //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+
+    function checkSubmit()
+    {
+        if (($("#user").val().length + $("#password").val().length) > 0)
+        {
+            var form = document.createElement("form");
+            form.setAttribute("method", "post");
+            form.setAttribute("action", "#");
+
+            var params = {user: $('#user').val(), password: $('#password').val()};
+
+            for (var key in params)
+            {
+                if (params.hasOwnProperty(key))
+                {
+                    var hiddenField = document.createElement("input");
+
+                    hiddenField.setAttribute("type", "hidden");
+                    hiddenField.setAttribute("name", key);
+                    hiddenField.setAttribute("value", params[key]);
+
+                    form.appendChild(hiddenField);
+                }
+            }
+
+            document.body.appendChild(form);
+
+            form.submit();
+        }
+        else
+        {
+            if ($("#user").val().length == 0)
+            {
+                $('#user').css('border', '2px dotted red');
+
+            }
+            if ($("#password").val().length == 0)
+            {
+                $('#password2').css('border', '2px dotted red');
+            }
+        }
+    }
+
+
+</script>
+
 {{end}}

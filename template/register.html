@@ -52,13 +52,24 @@
 
 <script>
 
-    jQuery(document).ready(function() {
-        jQuery(document).ready(function()
+    jQuery(document).ready(function ()
+    {
+
+        jQuery(document).ready(function ()
         {
             $("#user").val("")
             $("#mail").val("")
             $("#password").val("")
             $("#password2").val("")
+
+            jQuery(document).ready(function ()
+            {
+                if (($("#user").val().length + $("#mail").val().length + $("#password").val().length + $("#password2").val().length) > 0)
+                {
+                    location.reload();
+                }
+            });
+
         });
     });
 
@@ -86,27 +97,27 @@
             }
             else
             {
-                $('#password').css('border','2px dotted red');
-                $('#password2').css('border','2px dotted red');
+                $('#password').css('border', '2px dotted red');
+                $('#password2').css('border', '2px dotted red');
             }
         }
         else
         {
             if (user.length == 0)
             {
-                $('#user').css('border','2px dotted red');
+                $('#user').css('border', '2px dotted red');
             }
             if (mail.length == 0)
             {
-                $('#mail').css('border','2px dotted red');
+                $('#mail').css('border', '2px dotted red');
             }
             if (pass1.length == 0)
             {
-                $('#password').css('border','2px dotted red');
+                $('#password').css('border', '2px dotted red');
             }
             if (pass2.length == 0)
             {
-                $('#password2').css('border','2px dotted red');
+                $('#password2').css('border', '2px dotted red');
             }
         }
     }
