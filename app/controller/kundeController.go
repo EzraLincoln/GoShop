@@ -3,10 +3,7 @@ package controller
 import (
 	"../../config"
 	"../model"
-	"fmt"
 )
-
-// type Verleih model.Kunde
 
 type Kunden struct{}
 
@@ -15,8 +12,7 @@ func (v Kunden) Register_Kunden(user string, mail string, password string) (bool
 	v1, err := config.Db.Prepare("Insert into Kunde(Benutzername,BildUrl,Typ,Status,Passwort,Email) values (?,?,?,?,?,?)");
 	defer v1.Close()
 
-	v2, err := v1.Exec(user, "empty.jpg", "Benutzer", "aktiv", password, mail);
-	fmt.Println(v2)
+	_,err = v1.Exec(user, "empty.jpg", "Benutzer", "aktiv", password, mail);
 
 	if err != nil {
 		return true
@@ -40,8 +36,6 @@ func (v Kunden) Get_Kunden_By_ID(kunde_id int) (*model.Kunde) {
 }
 
 func (v Kunden) Get_Kunden_By_Name(name string) (*model.Kunde) {
-
-	fmt.Println("Suche nach ", name)
 
 	kunde := model.Kunde{}
 
@@ -74,6 +68,7 @@ func (v Kunden) Delete_Kunden_By_ID(kunde_id int) (bool) {
 		return true
 	}
 }
+
 func (v Kunden) Delete_Kunden_By_Name(name string) (bool) {
 	_, err := config.Db.Query("Delete From Kunde Where Kunde.Benutzername= $1", name)
 	if err != nil {
@@ -84,22 +79,25 @@ func (v Kunden) Delete_Kunden_By_Name(name string) (bool) {
 }
 
 func (v Kunden) Get_Alle_Kunden() (kunden []model.Kunde) {
+
 	rows, err := config.Db.Query("Select * From Kunde Where Typ = 'Benutzer'")
 
 	if err != nil {
 		return
 	}
-
 	for rows.Next() {
+
 		kunde := model.Kunde{}
+
 		err = rows.Scan(&kunde.KundenID, &kunde.Benutzername, &kunde.BildUrl, &kunde.Typ, &kunde.Status, &kunde.Passwort, &kunde.Email)
 
 		if err != nil {
 			return
 		}
-
 		kunden = append(kunden, kunde)
 	}
 	rows.Close()
+
 	return
+
 }
