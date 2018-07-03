@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-// Verleiher data structure
+
 type Verleih struct {
 	VerleihID int
 	KundenID  int
@@ -14,10 +14,8 @@ type Verleih struct {
 	Beginn    string
 	Rueckgabe string
 }
-
 type Verleihe map[int]*Verleih
 
-// Create Verleiher
 func Add_Verleih(EquipmentID int, KundenID int, beginn string, rückgabe string, anzahl int) {
 	//defer stmt.Close()
 	_, err := config.Db.Exec("insert into Verleih (KundenID,ArtikelID,Beginn,Rueckgabe) values ($1,$2,$3,$4)", EquipmentID, KundenID, beginn, rückgabe)
@@ -28,7 +26,6 @@ if err != nil {
 return
 }
 
-// Read Verleiher by VerleiherID
 func ReadVerleiher(id int) (verleiher Verleih, err error) {
 	verleiher = Verleih{}
 
@@ -37,14 +34,12 @@ func ReadVerleiher(id int) (verleiher Verleih, err error) {
 	return
 }
 
-// Update the Verleiher by id
 func UpdateVerleiher(id int, bname string, mail string) (err error) {
 	_, err = config.Db.Exec("update Verleiher set Benutzername = $1 where VerleiherID = $2", bname, id)
 	_, err = config.Db.Exec("update Verleiher set Email = $1 where VerleiherID = $2", mail, id)
 	return
 }
 
-// Delete Verleiher by id
 func Delete_Verleih_By_Kunden_ID(KundenID int) (err error) {
 	_, err = config.Db.Exec("delete from Verleih where KundenID = $1", KundenID)
 	return
@@ -52,5 +47,28 @@ func Delete_Verleih_By_Kunden_ID(KundenID int) (err error) {
 
 func Delete_Verleih_By_Artikel_ID(ArtikelID int) (err error) {
 	_, err = config.Db.Exec("delete from Verleih where ArtikelID = $1", ArtikelID)
+	return
+}
+
+func GetAllVerleihe() (verleihe []Verleih) {
+	
+	rows, err := config.Db.Query("select * from Verleih")
+	
+	if err != nil {
+		return
+	}
+	for rows.Next() {
+		
+		verleih := Verleih{}
+		
+		err = rows.Scan(&verleih.VerleihID, &verleih.KundenID, &verleih.ArtikelID, &verleih.Beginn, &verleih.Rueckgabe)
+		
+		if err != nil {
+			return
+		}
+		verleihe = append(verleihe, verleih)
+	}
+	rows.Close()
+	
 	return
 }

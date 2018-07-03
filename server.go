@@ -5,8 +5,7 @@ import (
 	"net/http"
 	"golang.org/x/crypto/bcrypt"
 	"fmt"
-	"./app"
-	"./app/model"
+	"./app/controller"
 )
 
 func main() {
@@ -21,10 +20,30 @@ func main() {
 	// KLAPPT
 	// model.Delete_Verleih_By_Artikel_ID(20)
 	
-	model.DeleteKunde(44)
+	// KLAPPT
+	// model.DeleteKunde(44)
 	
-	app.DefineHandlers()
-
+	http.HandleFunc("/", controller.Index)
+	///////////////////////////////////////////////////////////////////////////////////////
+	http.HandleFunc("/admin", controller.Admin)
+	http.HandleFunc("/admin/equipment{", controller.Admin_Equipment_Verwalten)
+	http.HandleFunc("/admin/add", controller.Admin_Equipment_Hinzufügen)
+	http.HandleFunc("/admin/edit-equipment", controller.Admin_Equipment_Bearbeiten)
+	http.HandleFunc("/admin/clients", controller.Admin_Kunden_Verwalten)
+	http.HandleFunc("/admin/edit-client", controller.Admin_Kunden_Bearbeiten)
+	///////////////////////////////////////////////////////////////////////////////////////
+	http.HandleFunc("/login", controller.Login)
+	http.HandleFunc("/logout", controller.Logout)
+	http.HandleFunc("/register", controller.Register)
+	///////////////////////////////////////////////////////////////////////////////////////
+	http.HandleFunc("/warenkorb", controller.Warenkorb)
+	http.HandleFunc("/equipment", controller.Equipment)
+	///////////////////////////////////////////////////////////////////////////////////////
+	http.HandleFunc("/myEquipment", controller.MeineGeräte)
+	http.HandleFunc("/profil", controller.Profil)
+	///////////////////////////////////////////////////////////////////////////////////////
+	http.HandleFunc("/test", controller.Test)
+	
 	fs := http.FileServer(http.Dir("./"))
 
 	http.Handle("/static/", fs)
