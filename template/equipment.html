@@ -31,58 +31,130 @@
         </div>
 
     </div>
-    <div class="row mt-5" style="margin-left:4%">
-    {{range .Items}}
-        <div class="col-md-6 mb-5">
-            <div class="row">
-                <div class="col-md-9">
-                    <div class="row">
-                        <h2 class="">{{.Bezeichnung}}</h2>
-                    </div>
-                    <div class="row text-spalte">
-                        <h4>{{.Hinweis}}</h4>
-                    </div>
-                    <div class="row">
-                        <div class="ml-0">
-                            <a href="/add-to-cart/{{.EquipmentID}}">
-                            {{if eq .Anzahl 0}}
-                                <button type="button" class="btn button-startpage" style="background-color:#495057;width: 150px">Vormerken</button>
-                            {{else}}
-                                <button type="button" class="btn button-startpage" style="width: 150px">In Warenkorb legen</button>
-                            {{end}}
-                            </a>
-                        </div>
-                        <div class="ml-auto">
-                            <h4>{{.Anzahl}} verfügbar</h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <img class="img-fluid" style="width: 150px; height: 100px" src="/static/media/equipment/{{.BildURL}}">
-                </div>
-            </div>
-        </div>
-    {{end}}
-
-    </div>
+    <div id="equipments" class="row mt-5" style="margin-left:4%"></div>
 </div>
 
 <script>
 
+    var arr = {{.Items}};
+    var ausgewählte_kategorie = "Alle";
+
+    for (var i = 0; i < arr.length; i++)
+    {
+        appendEquipment(i, arr[i].Bezeichnung, arr[i].Hinweis, arr[i].EquipmentID, arr[i].Anzahl, arr[i].BildURL);
+    }
+
+    function appendEquipment(index, Bezeichnung, Hinweis, EquipmentID, Anzahl, BildURL)
+    {
+        var str = '<div id="' + index + '"class="col-md-6 mb-5">'
+            + '<div class="row">'
+            + '<div class="col-md-9">'
+            + '<div class="row">'
+            + '<h2 class="">' + Bezeichnung + '</h2>'
+            + '</div>'
+            + '<div class="row text-spalte">'
+            + '<h4>' + Hinweis + '</h4>'
+            + '</div>'
+            + '<div class="row">'
+            + '<div class="ml-0">'
+            + '<a href="/add-to-cart/' + EquipmentID + '">';
+
+        if (Anzahl == 0)
+        {
+            str += '<button type="button" class="btn button-startpage" style="background-color:#495057;width: 150px">Vormerken</button>'
+        }
+        else
+        {
+            str += '<button type="button" class="btn button-startpage" style="width: 150px">In Warenkorb legen</button>'
+        }
+
+        str += '</a>'
+        str += '</div>'
+        str += '<div class="ml-auto">'
+        str += '<h4>' + Anzahl + 'verfügbar</h4>'
+        str += '</div>'
+        str += '</div>'
+        str += '</div>'
+        str += '<div class="col-md-3">'
+        str += '<img class="img-fluid" style="width: 150px; height: 100px" src="/static/media/equipment/' + BildURL + '">'
+        str += '</div>'
+        str += '</div>'
+        str += '</div>'
+
+        $("#equipments").append(str)
+    }
+
     $("#sucheNach").on("input", function ()
     {
-        post("sucheNach", $("#sucheNach").val())
+        /*$('#equipments').children().each(function ()
+        {
+            if (!$(this).attr("id").toUpperCase().includes($("#sucheNach").val().toUpperCase()) && $("#sucheNach").val() != "")
+            {
+                $(this).hide();
+            }
+            else if()
+               {
+
+                }
+            else if(ausgewählte_kategorie="")
+            {
+                $(this).show();
+            }
+
+        });*/
+
+        if ($("#sucheNach").val() != "")
+        {
+            for (var i = 0; i < arr.length; i++)
+            {
+
+                if (ausgewählte_kategorie == "Alle")
+                {
+                    if (arr[i].Bezeichnung.toUpperCase().includes($("#sucheNach").val().toUpperCase()))
+                    {
+                        $("#" + i).show();
+                    }
+                    else
+                    {
+                        $("#" + i).hide();
+                    }
+                }
+                else
+                {
+                    if (arr[i].Bezeichnung.toUpperCase().includes($("#sucheNach").val().toUpperCase()) && arr[i].Kategorie == ausgewählte_kategorie)
+                    {
+                        $("#" + i).show();
+                    }
+                    else
+                    {
+                        $("#" + i).hide();
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (var i = 0; i < arr.length; i++)
+            {
+                if (arr[i].Kategorie == ausgewählte_kategorie)
+                {
+                    $("#" + i).show();
+                }
+                else
+                {
+                    $("#" + i).hide();
+                }
+            }
+        }
     });
 
     $("#kategorie").on("change", function ()
     {
-        console.log($("#kategorie").val());
-        post("kategorie", $("#kategorie").val())
+        ausgewählte_kategorie = $("#kategorie").val();
     });
 
     $("#sortierung").on("change", function ()
     {
-        post("sortierung", $("#sortierung").val())
     });
 
     //-----------------------------------------------------------------

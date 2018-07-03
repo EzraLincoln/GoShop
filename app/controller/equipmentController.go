@@ -68,7 +68,7 @@ func (v Equipments) GetEquipment() (Equipments []model.Equipment) {
 		)
 		Equipments = append(Equipments, Equipment)
 		if err != nil {
-			fmt.Println("Error (2) in Controller - GetEquipment()")
+			// fmt.Println("Error (2) in Controller - GetEquipment()")
 		}
 	}
 	rows.Close()

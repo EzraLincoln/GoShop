@@ -14,12 +14,13 @@ func DefineHandlers() {
 	http.HandleFunc("/admin/edit-client", route.Admin_Kunden_Bearbeiten)
 	///////////////////////////////////////////////////////////////////////////////////////
 	http.HandleFunc("/login", route.Login)
+	http.HandleFunc("/logout", route.Logout)
 	http.HandleFunc("/register", route.Register)
 	///////////////////////////////////////////////////////////////////////////////////////
 	http.HandleFunc("/warenkorb", route.Warenkorb)
 	http.HandleFunc("/equipment", route.Equipment)
 	///////////////////////////////////////////////////////////////////////////////////////
-	http.HandleFunc("/myequipment", route.Meine_Geräte)
+	http.HandleFunc("/myEquipment", route.MeineGeräte)
 	http.HandleFunc("/profil", route.Profil)
 	///////////////////////////////////////////////////////////////////////////////////////
 	http.HandleFunc("/test", route.Test)

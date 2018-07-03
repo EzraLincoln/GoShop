@@ -4,7 +4,6 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-
 type Kunden map[int]*Kunde
 
 // Kunde data structure
@@ -35,6 +34,6 @@ func UpdateKunde(id int, bname string, psw string, mail string) (err error) {
 
 // Delete Kunde by id
 func DeleteKunde(id int) (err error) {
-	_, err = config.Db.Exec("delete from Kunde where KundenID = $1", id)
+	_, err = config.Db.Exec("delete from Kunde where KundenID = $1",id)
 	return
 }

@@ -20,9 +20,11 @@ func InitSQLiteDB() {
 	Db, err = sql.Open("sqlite3", "./config/borgdirmedia.db")
 	test(err)
 
-	key := make([]byte, 10)
+	key := make([]byte, 16)
 	rand.Read(key)
 	CookieStore = sessions.NewCookieStore(key)
+
+	CookieStore.MaxAge(600)
 
 	// gob.Register(&EquipInfo{})
 	// gob.Register(&CartData{})
